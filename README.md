@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Advanced Fitness & Nutrition Tracker</title>
+    <title>Advanced Fitness & Nutrition Tracker - API Edition</title>
     
     <script src="https://cdn.tailwindcss.com/"></script>
     <style>
@@ -39,7 +39,7 @@
         <div class="max-w-4xl mx-auto p-4 sm:p-8">
             <header class="text-center mb-6 p-1 rounded-xl">
                 <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness & Nutrition Tracker</h1>
-                <p class="text-gray-400 text-sm">Monitor TDEE, track macros, and calculate your **Caloric Balance** for targeted results.</p>
+                <p class="text-gray-400 text-sm">Now powered by **external API lookup** for a global food database.</p>
             </header>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
@@ -144,7 +144,7 @@
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
                     <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry</h2>
                     <p class="text-sm text-yellow-400 mb-2">
-                        💡 **Automated Calculation:** Enter **Item Name** and **Weight (g)** to automatically fill the macro fields from the database.
+                        💡 **API Lookup:** Enter **Item Name** (e.g., Dal, Chicken Tikka) and **Weight (g)**, then click **Lookup** to fetch data from a global database.
                     </p>
                     <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         <input type="hidden" id="food-id">
@@ -156,7 +156,7 @@
 
                         <div>
                             <label for="f-item" class="block text-sm font-medium text-gray-400 mb-1">Meal/Item Name</label>
-                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Oats" required
+                            <input type="text" id="f-item" placeholder="e.g., Dal, Chicken Breast" required
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
@@ -165,8 +165,9 @@
                             <input type="number" id="f-weight" placeholder="grams" required min="1"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
-                       <div class="lg:col-span-2 flex items-end">
-                             <button type="button" onclick="calculateFoodMacrosManual()" class="w-full bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-blue-700 transition duration-150 ease-in-out">
+                       
+                        <div class="lg:col-span-2 flex items-end">
+                             <button type="button" onclick="lookupFoodData()" id="f-lookup-btn" class="w-full bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-blue-700 transition duration-150 ease-in-out">
                                 Lookup & Auto-Fill
                             </button>
                         </div>
@@ -319,19 +320,17 @@
     <script>
         const STORAGE_KEY = 'healthTrackerState';
 
-        // --- 1. Nutritional Database (per 100g) ---
-        const FOOD_DATABASE = {
-            'chicken breast': { calories: 165, protein: 31.0, fat: 3.6, carbs: 0.0 },
-            'oats': { calories: 389, protein: 16.9, fat: 6.9, carbs: 66.3 },
-            'almonds': { calories: 579, protein: 21.1, fat: 49.9, carbs: 21.6 },
-            'white rice': { calories: 130, protein: 2.7, fat: 0.3, carbs: 28.2 },
-            'banana': { calories: 89, protein: 1.1, fat: 0.3, carbs: 22.8 },
-            'apple': { calories: 52, protein: 0.3, fat: 0.2, carbs: 13.8 },
-            'egg': { calories: 143, protein: 12.6, fat: 9.9, carbs: 0.7 },
-            'broccoli': { calories: 34, protein: 2.8, fat: 0.4, carbs: 6.6 },
-            'milk': { calories: 42, protein: 3.4, fat: 1.0, carbs: 5.0 } // Skim milk
-            // Add more foods here
-        };
+        // =========================================================================
+        // !!! IMPORTANT: API SETUP !!!
+        // 1. Get a free account and application details from a service like Edamam.
+        // 2. Paste your ID and Key here. (If you don't do this, the lookup will fail.)
+        // =========================================================================
+        const EDAMAM_APP_ID = 'YOUR_APP_ID'; // <--- PASTE YOUR EDAMAM APP ID HERE
+        const EDAMAM_APP_KEY = 'YOUR_APP_KEY'; // <--- PASTE YOUR EDAMAM API KEY HERE
+
+        const API_URL = `https://api.edamam.com/api/nutrition-data?app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
+        // =========================================================================
+
 
         let state = {
             workouts: [],
@@ -359,6 +358,7 @@
         const fItemInput = document.getElementById('f-item');
         const fWeightInput = document.getElementById('f-weight');
         const fSubmitBtn = document.getElementById('f-submit-btn');
+        const fLookupBtn = document.getElementById('f-lookup-btn');
 
         const fIdInput = document.getElementById('food-id');
         const fCaloriesInput = document.getElementById('f-calories');
@@ -387,7 +387,7 @@
         const guidanceGain = document.getElementById('guidance-gain');
 
 
-        // --- Utility Functions ---
+        // --- Utility Functions (unchanged) ---
 
         function customModal(message, title = 'Notification', isConfirm = false) {
             return new Promise(resolve => {
@@ -473,7 +473,7 @@
             }
         }
 
-        // --- Core Application Logic ---
+        // --- Core Application Logic (unchanged) ---
 
         function updateStats() {
             const totalWorkouts = state.workouts.length;
@@ -521,7 +521,8 @@
             currentView = view;
         }
 
-        // --- Workout Logic ---
+        // --- Workout Logic (unchanged) ---
+        // ... (Workout functions: logWorkout, editWorkout, deleteWorkout, renderWorkouts)
 
         function logWorkout(e) {
             e.preventDefault();
@@ -608,38 +609,72 @@
                 workoutList.appendChild(row);
             });
         }
-        
-        // --- Nutrition Logic (Automated Calculation) ---
 
-        function calculateFoodMacrosManual() {
-            const item = fItemInput.value.toLowerCase().trim();
+
+        // --- NEW API LOOKUP FUNCTION ---
+
+        async function lookupFoodData() {
+            const item = fItemInput.value.trim();
             const weight = parseFloat(fWeightInput.value);
-
-            // Clear previous results
+            
             fCaloriesInput.value = '';
             fProteinInput.value = '';
             fFatInput.value = '';
             fCarbsInput.value = '';
             
-            if (!item || isNaN(weight) || weight <= 0) {
-                customModal("Please enter a valid **Item Name** and **Weight (g)**.", "Input Required");
+            if (EDAMAM_APP_ID === 'YOUR_APP_ID' || EDAMAM_APP_KEY === 'YOUR_APP_KEY') {
+                customModal("Please obtain and enter your Edamam App ID and Key in the script's API SETUP section to enable external lookup.", "API Key Missing");
                 return;
             }
 
-            const foodData = FOOD_DATABASE[item];
-            if (foodData) {
-                const scale = weight / 100.0; // Scale factor for 100g data
+            if (!item || isNaN(weight) || weight <= 0) {
+                customModal("Please enter a valid **Item Name** (e.g., Dal) and **Weight (g)**.", "Input Required");
+                return;
+            }
 
-                fCaloriesInput.value = (foodData.calories * scale).toFixed(0);
-                fProteinInput.value = (foodData.protein * scale).toFixed(1);
-                fFatInput.value = (foodData.fat * scale).toFixed(1);
-                fCarbsInput.value = (foodData.carbs * scale).toFixed(1);
-                
-                customModal(`Macros successfully calculated for ${weight}g of ${item.toUpperCase()}. Check the fields below.`, "Calculation Success");
-            } else {
-                customModal(`**'${item.toUpperCase()}'** was not found in the database. Please manually enter the macros (kcal, P, F, C) or try a simpler name (e.g., 'oats', not 'rolled oats').`, "Food Not Found");
+            fLookupBtn.textContent = 'Searching...';
+            fLookupBtn.disabled = true;
+
+            try {
+                // API Query: uses the food name (ingr) and the desired weight in grams (quantity and unit are set to 1 and gram)
+                // The API will return the nutrition for the *entire query amount* (i.e., your 'weight' in grams).
+                const query = `${API_URL}&ingr=${item}&quantity=${weight}&unit=gram`;
+
+                const response = await fetch(query);
+                const data = await response.json();
+
+                if (response.ok && data.totalNutrientsKCal && data.totalNutrientsKCal > 0) {
+                    
+                    const calories = data.calories || 0;
+                    const protein = data.totalNutrients.PROCNT ? data.totalNutrients.PROCNT.quantity : 0;
+                    const fat = data.totalNutrients.FAT ? data.totalNutrients.FAT.quantity : 0;
+                    const carbs = data.totalNutrients.CHOCDF ? data.totalNutrients.CHOCDF.quantity : 0;
+                    
+                    // Populate fields
+                    fCaloriesInput.value = calories.toFixed(0);
+                    fProteinInput.value = protein.toFixed(1);
+                    fFatInput.value = fat.toFixed(1);
+                    fCarbsInput.value = carbs.toFixed(1);
+                    
+                    customModal(`Macros successfully calculated for ${weight}g of ${item.toUpperCase()}. You can now log the entry.`, "Calculation Success");
+
+                } else if (data.error || data.totalNutrientsKCal === 0) {
+                    customModal(`**'${item}'** could not be found or calculated. Please try a simpler, more common name (e.g., "moong dal" instead of "spicy moong dal"). You may enter the macros manually.`, "Food Not Found");
+                } else {
+                     customModal(`An unknown error occurred with the API lookup. Check your item name and API key.`, "API Error");
+                }
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                customModal("Could not connect to the nutrition database. Check your internet connection or API settings.", "Connection Error");
+            } finally {
+                fLookupBtn.textContent = 'Lookup & Auto-Fill';
+                fLookupBtn.disabled = false;
             }
         }
+
+
+        // --- Nutrition Logic (Log/Edit/Delete - uses populated fields) ---
 
         function logFood(e) {
             e.preventDefault();
@@ -740,8 +775,9 @@
             });
         }
 
-        // --- TDEE Logic (Harris-Benedict Equation) ---
-
+        // --- TDEE Logic (unchanged) ---
+        // ... (TDEE functions: calculateTDEE, renderProfile)
+        
         function calculateTDEE(e) {
             e.preventDefault();
 
@@ -799,6 +835,7 @@
             }
         }
 
+
         // --- Event Listeners and Initialization ---
 
         workoutForm.addEventListener('submit', logWorkout);
@@ -808,11 +845,12 @@
         // Make the core functions globally accessible for the onclick attributes in the table rows
         window.editWorkout = editWorkout;
         window.deleteWorkout = deleteWorkout;
+        window.logWorkout = logWorkout;
         window.editFood = editFood;
         window.deleteFood = deleteFood;
         window.switchView = switchView;
         window.customModal = customModal;
-        window.calculateFoodMacrosManual = calculateFoodMacrosManual; // Renamed to clarify function
+        window.lookupFoodData = lookupFoodData; 
 
         // Initialize application state and rendering
         document.addEventListener('DOMContentLoaded', () => {

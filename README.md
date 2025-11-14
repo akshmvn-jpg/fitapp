@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Advanced Fitness & Nutrition Tracker - API Edition</title>
+    <title>Advanced Fitness & Nutrition Tracker - Manual Edition</title>
     
     <script src="https://cdn.tailwindcss.com/"></script>
     <style>
@@ -39,7 +39,7 @@
         <div class="max-w-4xl mx-auto p-4 sm:p-8">
             <header class="text-center mb-6 p-1 rounded-xl">
                 <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness & Nutrition Tracker</h1>
-                <p class="text-gray-400 text-sm">Now powered by **external API lookup** for a global food database.</p>
+                <p class="text-gray-400 text-sm">Manual Entry Edition - No External APIs</p>
             </header>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
@@ -113,7 +113,7 @@
 
                         <div class="lg:col-span-4 mt-2">
                             <button type="submit" id="w-submit-btn"
-                                                class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
+                                    class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
                                 Add Workout
                             </button>
                         </div>
@@ -134,7 +134,7 @@
                             </tr>
                         </thead>
                         <tbody id="workout-list" class="bg-gray-800 divide-y divide-gray-700">
-                            </tbody>
+                        </tbody>
                     </table>
                     <p id="w-no-data-message" class="text-center text-gray-500 p-4 hidden">No workouts logged yet. Get moving!</p>
                 </div>
@@ -143,33 +143,27 @@
             <div id="nutrition-view">
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
                     <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry</h2>
-                    <p class="text-sm text-yellow-400 mb-2">
-                        💡 **API Lookup:** Enter **Item Name** (e.g., Dal, Chicken Tikka) and **Weight (g)**, then click **Lookup** to fetch data from a global database.
+                    <p class="text-sm text-gray-500 mb-2">
+                        Enter the details for your food item manually. Get the nutrition facts from the label or a trusted source.
                     </p>
-                    <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <input type="hidden" id="food-id">
 
-                        <div>
+                        <div class="lg:col-span-1">
                             <label for="f-date" class="block text-sm font-medium text-gray-400 mb-1">Date</label>
                             <input type="date" id="f-date" required class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
-                        <div>
+                        <div class="lg:col-span-2">
                             <label for="f-item" class="block text-sm font-medium text-gray-400 mb-1">Meal/Item Name</label>
-                            <input type="text" id="f-item" placeholder="e.g., Dal, Chicken Breast" required
+                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Pasta" required
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
-                        <div>
+                        <div class="lg:col-span-1">
                             <label for="f-weight" class="block text-sm font-medium text-gray-400 mb-1">Approx. Weight (g)</label>
                             <input type="number" id="f-weight" placeholder="grams" required min="1"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                       
-                        <div class="lg:col-span-2 flex items-end">
-                             <button type="button" onclick="lookupFoodData()" id="f-lookup-btn" class="w-full bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-blue-700 transition duration-150 ease-in-out">
-                                Lookup & Auto-Fill
-                            </button>
                         </div>
                         
                         <div>
@@ -195,11 +189,10 @@
                             <input type="number" id="f-carbs" placeholder="0" required min="0"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
-                        <div class="sm:col-span-2 lg:col-span-1 mt-2">
-                             </div>
-                        <div class="sm:col-span-2 lg:col-span-5 mt-2">
+                        
+                        <div class="lg:col-span-4 mt-2">
                             <button type="submit" id="f-submit-btn"
-                                                class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
+                                    class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
                                 Log Entry
                             </button>
                         </div>
@@ -222,7 +215,7 @@
                             </tr>
                         </thead>
                         <tbody id="food-list" class="bg-gray-800 divide-y divide-gray-700">
-                            </tbody>
+                        </tbody>
                     </table>
                     <p id="f-no-data-message" class="text-center text-gray-500 p-4 hidden">No food logged yet. Track your intake!</p>
                 </div>
@@ -276,7 +269,7 @@
 
                         <div class="lg:col-span-3 mt-2">
                             <button type="submit" id="p-submit-btn"
-                                                class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
+                                    class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
                                 Save Profile & Calculate TDEE
                             </button>
                         </div>
@@ -303,7 +296,6 @@
                 </div>
             </div>
 
-
             <div id="custom-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 hidden items-center justify-center z-50">
                 <div class="bg-gray-800 rounded-lg p-6 w-11/12 max-w-sm shadow-2xl">
                     <h3 id="modal-title" class="text-xl font-bold mb-4 text-gray-200">Alert</h3>
@@ -320,23 +312,11 @@
     <script>
         const STORAGE_KEY = 'healthTrackerState';
 
-        // =========================================================================
-        // !!! IMPORTANT: API SETUP !!!
-        // 1. Get a free account and application details from a service like Edamam.
-        // 2. Paste your ID and Key here. (If you don't do this, the lookup will fail.)
-        // =========================================================================
-        const EDAMAM_APP_ID = 'YOUR_APP_ID'; // <--- PASTE YOUR EDAMAM APP ID HERE
-        const EDAMAM_APP_KEY = 'YOUR_APP_KEY'; // <--- PASTE YOUR EDAMAM API KEY HERE
-
-        const API_URL = `https://api.edamam.com/api/nutrition-data?app_id=${EDAMAM_APP_ID}&app_key=${EDAMAM_APP_KEY}`;
-        // =========================================================================
-
-
         let state = {
             workouts: [],
             foods: [],
-            profile: { 
-                age: null, gender: null, height: null, weight: null, 
+            profile: {
+                age: null, gender: null, height: null, weight: null,
                 activity: null, bmr: null, tdee: null
             }
         };
@@ -345,7 +325,7 @@
         // --- DOM Element Variables ---
         const workoutForm = document.getElementById('workout-form');
         const foodForm = document.getElementById('food-form');
-        const profileForm = document.getElementById('profile-form'); 
+        const profileForm = document.getElementById('profile-form');
 
         const wDateInput = document.getElementById('w-date');
         const wActivityInput = document.getElementById('w-activity');
@@ -358,7 +338,8 @@
         const fItemInput = document.getElementById('f-item');
         const fWeightInput = document.getElementById('f-weight');
         const fSubmitBtn = document.getElementById('f-submit-btn');
-        const fLookupBtn = document.getElementById('f-lookup-btn');
+        
+        // ** API elements removed **
 
         const fIdInput = document.getElementById('food-id');
         const fCaloriesInput = document.getElementById('f-calories');
@@ -387,7 +368,7 @@
         const guidanceGain = document.getElementById('guidance-gain');
 
 
-        // --- Utility Functions (unchanged) ---
+        // --- Utility Functions ---
 
         function customModal(message, title = 'Notification', isConfirm = false) {
             return new Promise(resolve => {
@@ -399,7 +380,7 @@
 
                 modalTitle.textContent = title;
                 modalMessage.textContent = message;
-                
+
                 // Click handlers
                 const handleCancel = () => {
                     modal.classList.add('hidden');
@@ -416,19 +397,23 @@
                     resolve(true);
                 };
 
-                modalCancelBtn.addEventListener('click', handleCancel);
-                modalConfirmBtn.addEventListener('click', handleConfirm);
+                // Remove old listeners before adding new ones
+                modalConfirmBtn.replaceWith(modalConfirmBtn.cloneNode(true));
+                modalCancelBtn.replaceWith(modalCancelBtn.cloneNode(true));
+                document.getElementById('modal-confirm-btn').addEventListener('click', handleConfirm);
+                document.getElementById('modal-cancel-btn').addEventListener('click', handleCancel);
+
 
                 if (isConfirm) {
-                    modalCancelBtn.classList.remove('hidden');
-                    modalConfirmBtn.textContent = 'Confirm Delete';
-                    modalConfirmBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-                    modalConfirmBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                    document.getElementById('modal-cancel-btn').classList.remove('hidden');
+                    document.getElementById('modal-confirm-btn').textContent = 'Confirm Delete';
+                    document.getElementById('modal-confirm-btn').classList.remove('bg-green-600', 'hover:bg-green-700');
+                    document.getElementById('modal-confirm-btn').classList.add('bg-red-600', 'hover:bg-red-700');
                 } else {
-                    modalCancelBtn.classList.add('hidden');
-                    modalConfirmBtn.textContent = 'OK';
-                    modalConfirmBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-                    modalConfirmBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    document.getElementById('modal-cancel-btn').classList.add('hidden');
+                    document.getElementById('modal-confirm-btn').textContent = 'OK';
+                    document.getElementById('modal-confirm-btn').classList.add('bg-green-600', 'hover:bg-green-700');
+                    document.getElementById('modal-confirm-btn').classList.remove('bg-red-600', 'hover:bg-red-700');
                 }
 
                 modal.classList.remove('hidden');
@@ -457,36 +442,46 @@
                     state.workouts = loadedState.workouts || [];
                     state.foods = loadedState.foods || [];
                     state.profile = loadedState.profile || state.profile;
-                    
-                    // Set current date on initial load
-                    const today = new Date().toISOString().split('T')[0];
-                    if (!wDateInput.value) wDateInput.value = today;
-                    if (!fDateInput.value) fDateInput.value = today;
-
-                    updateStats();
-                    renderWorkouts();
-                    renderFoods();
-                    renderProfile();
                 }
+                // Set current date on initial load
+                const today = new Date().toISOString().split('T')[0];
+                if (!wDateInput.value) wDateInput.value = today;
+                if (!fDateInput.value) fDateInput.value = today;
+
+                updateStats();
+                renderWorkouts();
+                renderFoods();
+                renderProfile();
+
             } catch (error) {
                 console.error("Error loading state from localStorage:", error);
+                // Set defaults even if load fails
+                const today = new Date().toISOString().split('T')[0];
+                if (!wDateInput.value) wDateInput.value = today;
+                if (!fDateInput.value) fDateInput.value = today;
             }
         }
 
-        // --- Core Application Logic (unchanged) ---
+        // --- Core Application Logic ---
 
         function updateStats() {
             const totalWorkouts = state.workouts.length;
             const totalBurned = state.workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
             const totalConsumed = state.foods.reduce((sum, f) => sum + f.calories, 0);
             const totalProtein = state.foods.reduce((sum, f) => sum + f.protein, 0);
-            const balance = totalConsumed - (totalBurned + (state.profile.tdee || 0));
+            
+            // Use TDEE for balance, or 0 if not set
+            const tdee = state.profile.tdee || 0;
+            
+            // This is a running total balance.
+            const balance = totalConsumed - totalBurned - tdee;
+
 
             document.getElementById('stat-total-workouts').textContent = totalWorkouts;
             document.getElementById('stat-total-burned').textContent = totalBurned.toFixed(0);
             document.getElementById('stat-total-consumed').textContent = totalConsumed.toFixed(0);
             document.getElementById('stat-total-protein').textContent = totalProtein.toFixed(0);
-            
+
             document.getElementById('stat-tdee').textContent = state.profile.tdee ? state.profile.tdee.toFixed(0) : 'N/A';
 
             const balanceText = state.profile.tdee ? balance.toFixed(0) : 'N/A';
@@ -497,9 +492,9 @@
 
             if (state.profile.tdee) {
                 if (balance <= -250) {
-                    balanceCard.classList.add('bg-green-600'); // Significant deficit (good for loss)
+                    balanceCard.classList.add('bg-green-600'); // Significant deficit
                 } else if (balance >= 250) {
-                    balanceCard.classList.add('bg-red-600'); // Significant surplus (good for gain)
+                    balanceCard.classList.add('bg-red-600'); // Significant surplus
                 } else {
                     balanceCard.classList.add('bg-gray-600'); // Maintenance/Neutral
                 }
@@ -517,12 +512,11 @@
 
             document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab[onclick="switchView('${view}')"]`).classList.add('active');
-            
+
             currentView = view;
         }
 
-        // --- Workout Logic (unchanged) ---
-        // ... (Workout functions: logWorkout, editWorkout, deleteWorkout, renderWorkouts)
+        // --- Workout Logic ---
 
         function logWorkout(e) {
             e.preventDefault();
@@ -532,331 +526,273 @@
             const sets = parseInt(wSetsInput.value);
             const reps = parseInt(wRepsInput.value);
             const id = wIdInput.value;
-            
-            // Calculation: Total Reps * 1.5 kcal
-            const caloriesBurned = sets * reps * 1.5; 
+
+            if (!date || !activity || !sets || !reps) {
+                customModal('Please fill in all workout fields.', 'Input Error');
+                return;
+            }
+
+            // Calculation: (Total Reps) * 1.5 kcal
+            const caloriesBurned = (sets * reps) * 1.5;
 
             if (id) {
-                // Edit existing workout
+                // Update existing workout
                 const index = state.workouts.findIndex(w => w.id === id);
-                if (index > -1) {
-                    state.workouts[index] = { id, date, activity, sets, reps, caloriesBurned };
-                    customModal("Workout updated successfully!");
+                if (index !== -1) {
+                    state.workouts[index] = { ...state.workouts[index], date, activity, sets, reps, caloriesBurned };
                 }
             } else {
                 // Add new workout
-                const newId = Date.now().toString();
-                state.workouts.push({ id: newId, date, activity, sets, reps, caloriesBurned });
-                customModal("Workout added successfully!");
+                const newWorkout = {
+                    id: `w-${new Date().getTime()}`,
+                    date,
+                    activity,
+                    sets,
+                    reps,
+                    caloriesBurned
+                };
+                state.workouts.push(newWorkout);
             }
-            
+
+            saveState();
+            updateStats();
+            renderWorkouts();
             workoutForm.reset();
             wIdInput.value = '';
             wSubmitBtn.textContent = 'Add Workout';
-            // Set current date back after reset
-            wDateInput.value = new Date().toISOString().split('T')[0];
-
-            saveState();
-            updateStats();
-            renderWorkouts();
-        }
-
-        function editWorkout(id) {
-            const workout = state.workouts.find(w => w.id === id);
-            if (!workout) return;
-
-            wIdInput.value = workout.id;
-            wDateInput.value = workout.date;
-            wActivityInput.value = workout.activity;
-            wSetsInput.value = workout.sets;
-            wRepsInput.value = workout.reps;
-
-            wSubmitBtn.textContent = 'Save Workout Changes';
-            switchView('workout');
-        }
-
-        async function deleteWorkout(id) {
-            const confirmed = await customModal("Are you sure you want to delete this workout?", "Confirm Deletion", true);
-            if (!confirmed) return;
-            state.workouts = state.workouts.filter(w => w.id !== id);
-            saveState();
-            updateStats();
-            renderWorkouts();
+            wDateInput.value = new Date().toISOString().split('T')[0]; // Reset date to today
         }
 
         function renderWorkouts() {
-            workoutList.innerHTML = '';
+            workoutList.innerHTML = ''; // Clear existing list
+
             if (state.workouts.length === 0) {
                 wNoDataMessage.classList.remove('hidden');
                 return;
             }
+
             wNoDataMessage.classList.add('hidden');
 
-            state.workouts.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(w => {
+            const sortedWorkouts = [...state.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedWorkouts.forEach(w => {
                 const row = document.createElement('tr');
-                row.classList.add('data-row', 'hover:bg-gray-700', 'transition');
+                row.className = 'data-row';
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">${w.date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.activity}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">${w.activity}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.sets}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.reps}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-400 font-semibold">${w.caloriesBurned.toFixed(0)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="editWorkout('${w.id}')" class="text-indigo-400 hover:text-indigo-600 mr-3">Edit</button>
-                        <button onclick="deleteWorkout('${w.id}')" class="text-red-400 hover:text-red-600">Delete</button>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-400">${w.caloriesBurned.toFixed(0)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                        <button onclick="editWorkout('${w.id}')" class="text-blue-400 hover:text-blue-300 transition">Edit</button>
+                        <button onclick="deleteWorkout('${w.id}')" class="text-red-400 hover:text-red-300 transition">Delete</button>
                     </td>
                 `;
                 workoutList.appendChild(row);
             });
         }
 
-
-        // --- NEW API LOOKUP FUNCTION ---
-
-        async function lookupFoodData() {
-            const item = fItemInput.value.trim();
-            const weight = parseFloat(fWeightInput.value);
-            
-            fCaloriesInput.value = '';
-            fProteinInput.value = '';
-            fFatInput.value = '';
-            fCarbsInput.value = '';
-            
-            if (EDAMAM_APP_ID === 'YOUR_APP_ID' || EDAMAM_APP_KEY === 'YOUR_APP_KEY') {
-                customModal("Please obtain and enter your Edamam App ID and Key in the script's API SETUP section to enable external lookup.", "API Key Missing");
-                return;
-            }
-
-            if (!item || isNaN(weight) || weight <= 0) {
-                customModal("Please enter a valid **Item Name** (e.g., Dal) and **Weight (g)**.", "Input Required");
-                return;
-            }
-
-            fLookupBtn.textContent = 'Searching...';
-            fLookupBtn.disabled = true;
-
-            try {
-                // API Query: uses the food name (ingr) and the desired weight in grams (quantity and unit are set to 1 and gram)
-                // The API will return the nutrition for the *entire query amount* (i.e., your 'weight' in grams).
-                const query = `${API_URL}&ingr=${item}&quantity=${weight}&unit=gram`;
-
-                const response = await fetch(query);
-                const data = await response.json();
-
-                if (response.ok && data.totalNutrientsKCal && data.totalNutrientsKCal > 0) {
-                    
-                    const calories = data.calories || 0;
-                    const protein = data.totalNutrients.PROCNT ? data.totalNutrients.PROCNT.quantity : 0;
-                    const fat = data.totalNutrients.FAT ? data.totalNutrients.FAT.quantity : 0;
-                    const carbs = data.totalNutrients.CHOCDF ? data.totalNutrients.CHOCDF.quantity : 0;
-                    
-                    // Populate fields
-                    fCaloriesInput.value = calories.toFixed(0);
-                    fProteinInput.value = protein.toFixed(1);
-                    fFatInput.value = fat.toFixed(1);
-                    fCarbsInput.value = carbs.toFixed(1);
-                    
-                    customModal(`Macros successfully calculated for ${weight}g of ${item.toUpperCase()}. You can now log the entry.`, "Calculation Success");
-
-                } else if (data.error || data.totalNutrientsKCal === 0) {
-                    customModal(`**'${item}'** could not be found or calculated. Please try a simpler, more common name (e.g., "moong dal" instead of "spicy moong dal"). You may enter the macros manually.`, "Food Not Found");
-                } else {
-                     customModal(`An unknown error occurred with the API lookup. Check your item name and API key.`, "API Error");
-                }
-
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                customModal("Could not connect to the nutrition database. Check your internet connection or API settings.", "Connection Error");
-            } finally {
-                fLookupBtn.textContent = 'Lookup & Auto-Fill';
-                fLookupBtn.disabled = false;
+        function editWorkout(id) {
+            const workout = state.workouts.find(w => w.id === id);
+            if (workout) {
+                wIdInput.value = workout.id;
+                wDateInput.value = workout.date;
+                wActivityInput.value = workout.activity;
+                wSetsInput.value = workout.sets;
+                wRepsInput.value = workout.reps;
+                wSubmitBtn.textContent = 'Update Workout';
+                window.scrollTo(0, 0); // Scroll to top
             }
         }
 
+        async function deleteWorkout(id) {
+            const confirmed = await customModal('Are you sure you want to delete this workout?', 'Confirm Delete', true);
+            if (confirmed) {
+                state.workouts = state.workouts.filter(w => w.id !== id);
+                saveState();
+                updateStats();
+                renderWorkouts();
+            }
+        }
 
-        // --- Nutrition Logic (Log/Edit/Delete - uses populated fields) ---
+        // --- Nutrition Logic ---
 
         function logFood(e) {
             e.preventDefault();
 
-            const id = fIdInput.value;
             const date = fDateInput.value;
             const item = fItemInput.value.trim();
             const weight = parseFloat(fWeightInput.value);
-            const calories = parseInt(fCaloriesInput.value);
+            const calories = parseFloat(fCaloriesInput.value);
             const protein = parseFloat(fProteinInput.value);
             const fat = parseFloat(fFatInput.value);
             const carbs = parseFloat(fCarbsInput.value);
+            const id = fIdInput.value;
 
-            // Basic validation
-            if (isNaN(weight) || isNaN(calories) || isNaN(protein) || isNaN(fat) || isNaN(carbs)) {
-                customModal("Please ensure all weight and macro fields are filled with valid numbers (use the 'Lookup & Auto-Fill' button if needed).", "Validation Error");
+            if (!date || !item || isNaN(weight) || isNaN(calories) || isNaN(protein) || isNaN(fat) || isNaN(carbs)) {
+                customModal('Please fill in all food fields with valid numbers.', 'Input Error');
                 return;
             }
 
-            const newEntry = { id, date, item, weight, calories, protein, fat, carbs };
+            const foodEntry = { date, item, weight, calories, protein, fat, carbs };
 
             if (id) {
-                // Edit existing food
+                // Update
                 const index = state.foods.findIndex(f => f.id === id);
-                if (index > -1) {
-                    state.foods[index] = newEntry;
-                    customModal("Food entry updated successfully!");
+                if (index !== -1) {
+                    state.foods[index] = { ...state.foods[index], ...foodEntry };
                 }
             } else {
-                // Add new food
-                const newId = Date.now().toString();
-                state.foods.push({ ...newEntry, id: newId });
-                customModal("Food entry logged successfully!");
+                // Add new
+                foodEntry.id = `f-${new Date().getTime()}`;
+                state.foods.push(foodEntry);
             }
-            
+
+            saveState();
+            updateStats();
+            renderFoods();
             foodForm.reset();
             fIdInput.value = '';
             fSubmitBtn.textContent = 'Log Entry';
-            // Set current date back after reset
-            fDateInput.value = new Date().toISOString().split('T')[0];
-
-            saveState();
-            updateStats();
-            renderFoods();
-        }
-
-        function editFood(id) {
-            const food = state.foods.find(f => f.id === id);
-            if (!food) return;
-
-            fIdInput.value = food.id;
-            fDateInput.value = food.date;
-            fItemInput.value = food.item;
-            fWeightInput.value = food.weight;
-            fCaloriesInput.value = food.calories;
-            fProteinInput.value = food.protein;
-            fFatInput.value = food.fat;
-            fCarbsInput.value = food.carbs;
-
-            fSubmitBtn.textContent = 'Save Food Changes';
-            switchView('nutrition');
-        }
-
-        async function deleteFood(id) {
-            const confirmed = await customModal("Are you sure you want to delete this food entry?", "Confirm Deletion", true);
-            if (!confirmed) return;
-            state.foods = state.foods.filter(f => f.id !== id);
-            saveState();
-            updateStats();
-            renderFoods();
+            fDateInput.value = new Date().toISOString().split('T')[0]; // Reset date
         }
 
         function renderFoods() {
-            foodList.innerHTML = '';
+            foodList.innerHTML = ''; // Clear existing list
+
             if (state.foods.length === 0) {
                 fNoDataMessage.classList.remove('hidden');
                 return;
             }
+
             fNoDataMessage.classList.add('hidden');
 
-            state.foods.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(f => {
+            const sortedFoods = [...state.foods].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedFoods.forEach(f => {
                 const row = document.createElement('tr');
-                row.classList.add('data-row', 'hover:bg-gray-700', 'transition');
+                row.className = 'data-row';
                 row.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-300">${f.date}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">${f.item}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-yellow-400">${f.weight}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-400 font-semibold">${f.calories}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-purple-400">${f.protein}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-400">${f.carbs}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-sm text-orange-400">${f.fat}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="editFood('${f.id}')" class="text-indigo-400 hover:text-indigo-600 mr-3">Edit</button>
-                        <button onclick="deleteFood('${f.id}')" class="text-red-400 hover:text-red-600">Delete</button>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.date}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-white">${f.item}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.weight.toFixed(0)}g</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-green-400">${f.calories.toFixed(0)}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-purple-400">${f.protein.toFixed(1)}g</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.carbs.toFixed(1)}g</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.fat.toFixed(1)}g</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                        <button onclick="editFood('${f.id}')" class="text-blue-400 hover:text-blue-300 transition">Edit</button>
+                        <button onclick="deleteFood('${f.id}')" class="text-red-400 hover:text-red-300 transition">Delete</button>
                     </td>
                 `;
                 foodList.appendChild(row);
             });
         }
 
-        // --- TDEE Logic (unchanged) ---
-        // ... (TDEE functions: calculateTDEE, renderProfile)
-        
-        function calculateTDEE(e) {
+        function editFood(id) {
+            const food = state.foods.find(f => f.id === id);
+            if (food) {
+                fIdInput.value = food.id;
+                fDateInput.value = food.date;
+                fItemInput.value = food.item;
+                fWeightInput.value = food.weight;
+                fCaloriesInput.value = food.calories;
+                fProteinInput.value = food.protein;
+                fFatInput.value = food.fat;
+                fCarbsInput.value = food.carbs;
+                fSubmitBtn.textContent = 'Update Entry';
+                window.scrollTo(0, 0); // Scroll to top
+            }
+        }
+
+        async function deleteFood(id) {
+            const confirmed = await customModal('Are you sure you want to delete this food entry?', 'Confirm Delete', true);
+            if (confirmed) {
+                state.foods = state.foods.filter(f => f.id !== id);
+                saveState();
+                updateStats();
+                renderFoods();
+            }
+        }
+
+        // ** API Food Lookup function removed **
+
+        // --- TDEE/Profile Logic ---
+
+        function saveProfile(e) {
             e.preventDefault();
 
             const gender = pGenderInput.value;
             const age = parseInt(pAgeInput.value);
             const height = parseInt(pHeightInput.value);
-            const weight = parseFloat(pWeightInput.value);
-            const activityFactor = parseFloat(pActivityInput.value);
+            const weight = parseInt(pWeightInput.value);
+            const activity = parseFloat(pActivityInput.value);
 
-            if (!gender || isNaN(age) || isNaN(height) || isNaN(weight) || isNaN(activityFactor)) {
-                customModal("Please fill out all profile fields completely and accurately.", "Missing Input");
+            if (!gender || !age || !height || !weight || !activity) {
+                customModal('Please fill in all profile fields.', 'Input Error');
                 return;
             }
 
+            // Calculate BMR using Mifflin-St Jeor formula
             let bmr;
             if (gender === 'male') {
-                // Male BMR: (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
                 bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
             } else {
-                // Female BMR: (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
                 bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
             }
 
-            const tdee = bmr * activityFactor;
+            const tdee = bmr * activity;
 
-            state.profile = {
-                age, gender, height, weight, activity: activityFactor, bmr: bmr, tdee: tdee
-            };
+            // Save to state
+            state.profile = { gender, age, height, weight, activity, bmr, tdee };
 
             saveState();
-            renderProfile();
-            updateStats();
-            customModal("Profile saved and TDEE calculated successfully!", "Success");
+            renderProfile(); // Update the display
+            updateStats(); // Update the main dashboard stats
+            customModal('Profile and TDEE calculation saved!', 'Profile Updated');
         }
 
         function renderProfile() {
-            if (state.profile.tdee) {
-                displayBMR.textContent = state.profile.bmr.toFixed(0);
-                displayTDEE.textContent = state.profile.tdee.toFixed(0);
+            const { gender, age, height, weight, activity, bmr, tdee } = state.profile;
 
-                const tdeeValue = state.profile.tdee;
-                
-                guidanceMaintain.textContent = tdeeValue.toFixed(0);
-                guidanceLoss.textContent = (tdeeValue - 500).toFixed(0);
-                guidanceGain.textContent = (tdeeValue + 300).toFixed(0);
+            if (gender) pGenderInput.value = gender;
+            if (age) pAgeInput.value = age;
+            if (height) pHeightInput.value = height;
+            if (weight) pWeightInput.value = weight;
+            if (activity) pActivityInput.value = activity;
 
+            if (bmr && tdee) {
+                displayBMR.textContent = bmr.toFixed(0);
+                displayTDEE.textContent = tdee.toFixed(0);
+
+                // Show guidance
+                guidanceMaintain.textContent = tdee.toFixed(0);
+                guidanceLoss.textContent = (tdee - 500).toFixed(0); // 500 kcal deficit
+                guidanceGain.textContent = (tdee + 300).toFixed(0); // 300 kcal surplus
                 tdeeGuidance.classList.remove('hidden');
-
-                // Fill form fields if data exists
-                pGenderInput.value = state.profile.gender || '';
-                pAgeInput.value = state.profile.age || '';
-                pHeightInput.value = state.profile.height || '';
-                pWeightInput.value = state.profile.weight || '';
-                pActivityInput.value = state.profile.activity || '';
+            } else {
+                displayBMR.textContent = 'N/A';
+                displayTDEE.textContent = 'N/A';
+                tdeeGuidance.classList.add('hidden');
             }
         }
 
 
-        // --- Event Listeners and Initialization ---
-
-        workoutForm.addEventListener('submit', logWorkout);
-        foodForm.addEventListener('submit', logFood);
-        profileForm.addEventListener('submit', calculateTDEE);
-
-        // Make the core functions globally accessible for the onclick attributes in the table rows
-        window.editWorkout = editWorkout;
-        window.deleteWorkout = deleteWorkout;
-        window.logWorkout = logWorkout;
-        window.editFood = editFood;
-        window.deleteFood = deleteFood;
-        window.switchView = switchView;
-        window.customModal = customModal;
-        window.lookupFoodData = lookupFoodData; 
-
-        // Initialize application state and rendering
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Load saved state
             loadState();
-            switchView('nutrition'); // Start on the Nutrition tab
+
+            // Attach event listeners
+            workoutForm.addEventListener('submit', logWorkout);
+            foodForm.addEventListener('submit', logFood);
+            profileForm.addEventListener('submit', saveProfile);
+
+            // Set initial view
+            switchView(currentView);
         });
     </script>
+
 </body>
 </html>

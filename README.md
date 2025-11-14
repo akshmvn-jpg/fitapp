@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>AI Advanced Fitness & Nutrition Tracker</title>
+    <title>Advanced Fitness & Nutrition Tracker</title>
     
     <script src="https://cdn.tailwindcss.com/"></script>
     <style>
@@ -38,7 +38,7 @@
     <div class="app-container">
         <div class="max-w-4xl mx-auto p-4 sm:p-8">
             <header class="text-center mb-6 p-1 rounded-xl">
-                <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness & Nutrition Tracker (AI Macros)</h1>
+                <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness & Nutrition Tracker</h1>
                 <p class="text-gray-400 text-sm">Monitor TDEE, track macros, and calculate your **Caloric Balance** for targeted results.</p>
             </header>
 
@@ -113,7 +113,7 @@
 
                         <div class="lg:col-span-4 mt-2">
                             <button type="submit" id="w-submit-btn"
-                                        class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
+                                            class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
                                 Add Workout
                             </button>
                         </div>
@@ -142,11 +142,11 @@
 
             <div id="nutrition-view">
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry (AI Estimated)</h2>
+                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry</h2>
                     <p class="text-sm text-yellow-500 mb-2">
-                        💡 **Tip for Accuracy:** For regional dishes like **Dal**, include preparation details (e.g., "Masoor Dal with 1 tsp Ghee") for better AI estimation.
+                        💡 **Note:** Enter *Calories*, *Protein*, *Fat*, and *Carbs* manually in the form below after submitting the Item Name and Weight.
                     </p>
-                    <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         <input type="hidden" id="food-id">
 
                         <div>
@@ -156,7 +156,7 @@
 
                         <div>
                             <label for="f-item" class="block text-sm font-medium text-gray-400 mb-1">Meal/Item Name</label>
-                            <input type="text" id="f-item" placeholder="e.g., Dal with Ghee, Apple, Chicken Curry" required
+                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Rice" required
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
@@ -166,23 +166,33 @@
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
                         
-                        <div class="lg:col-span-1 estimation-container">
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Estimated Macros (AI)</label>
-                            <div id="f-estimated-macros" class="p-3 bg-gray-700 border border-gray-600 rounded-lg text-sm text-yellow-300 font-mono">
-                                <span id="estimation-status" class="text-xs text-gray-400">Enter food details to estimate...</span>
-                                <div id="macro-display" class="hidden font-bold">
-                                    Kcal: <span id="display-kcal">0</span> | P: <span id="display-protein-g">0</span> | F: <span id="display-fat-g">0</span> | C: <span id="display-carbs-g">0</span>
-                                </div>
-                            </div>
-                            <input type="hidden" id="f-calories">
-                            <input type="hidden" id="f-protein">
-                            <input type="hidden" id="f-fat">
-                            <input type="hidden" id="f-carbs">
+                        <div>
+                            <label for="f-calories" class="block text-sm font-medium text-gray-400 mb-1">Calories (kcal)</label>
+                            <input type="number" id="f-calories" placeholder="e.g., 250" required min="0"
+                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
-                        <div class="sm:col-span-2 lg:col-span-4 mt-2">
+
+                        <div>
+                            <label for="f-protein" class="block text-sm font-medium text-gray-400 mb-1">Protein (g)</label>
+                            <input type="number" id="f-protein" placeholder="e.g., 20" required min="0"
+                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
+                        </div>
+
+                        <div>
+                            <label for="f-fat" class="block text-sm font-medium text-gray-400 mb-1">Fat (g)</label>
+                            <input type="number" id="f-fat" placeholder="e.g., 5" required min="0"
+                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        
+                        <div>
+                            <label for="f-carbs" class="block text-sm font-medium text-gray-400 mb-1">Carbs (g)</label>
+                            <input type="number" id="f-carbs" placeholder="e.g., 30" required min="0"
+                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div class="sm:col-span-2 lg:col-span-5 mt-2">
                             <button type="submit" id="f-submit-btn"
-                                        class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
-                                Get Estimate & Log Entry
+                                            class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
+                                Log Entry
                             </button>
                         </div>
                     </form>
@@ -258,7 +268,7 @@
 
                         <div class="lg:col-span-3 mt-2">
                             <button type="submit" id="p-submit-btn"
-                                        class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
+                                            class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
                                 Save Profile & Calculate TDEE
                             </button>
                         </div>
@@ -301,9 +311,7 @@
 
     <script>
         const STORAGE_KEY = 'healthTrackerState';
-        const API_MODEL = "gemini-2.5-flash-preview-09-2025";
-        const apiKey = ""; // API key is provided by the environment
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${API_MODEL}:generateContent?key=${apiKey}`;
+        // REMOVED: API_MODEL, apiKey, apiUrl, NUTRITION_SCHEMA
 
         let state = {
             workouts: [],
@@ -335,16 +343,12 @@
         const fSubmitBtn = document.getElementById('f-submit-btn');
 
         const fIdInput = document.getElementById('food-id');
+        // REPLACED/MODIFIED: Macro elements are now for manual entry
         const fCaloriesInput = document.getElementById('f-calories');
         const fProteinInput = document.getElementById('f-protein');
         const fFatInput = document.getElementById('f-fat');
         const fCarbsInput = document.getElementById('f-carbs');
-        const macroDisplay = document.getElementById('macro-display');
-        const displayKcal = document.getElementById('display-kcal');
-        const displayProtein = document.getElementById('display-protein-g');
-        const displayFat = document.getElementById('display-fat-g');
-        const displayCarbs = document.getElementById('display-carbs-g');
-        const estimationStatus = document.getElementById('estimation-status');
+        // REMOVED: macroDisplay, displayKcal, displayProtein, displayFat, displayCarbs, estimationStatus elements
 
         const workoutList = document.getElementById('workout-list');
         const foodList = document.getElementById('food-list');
@@ -415,32 +419,7 @@
             });
         }
 
-        // Function for exponential backoff retry logic
-        async function fetchWithRetry(url, options, maxRetries = 3) {
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        if (response.status === 429 && i < maxRetries - 1) { // 429 Too Many Requests
-                            const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
-                            console.warn(`Rate limit hit, retrying in ${delay / 1000}s...`);
-                            await new Promise(resolve => setTimeout(resolve, delay));
-                            continue;
-                        }
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response;
-                } catch (error) {
-                    if (i === maxRetries - 1) throw error;
-                    console.error(`Fetch attempt ${i + 1} failed:`, error.message);
-                    // Non-rate limit error, but still retry with backoff
-                    const delay = Math.pow(2, i) * 1000 + Math.random() * 500;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-            throw new Error("Failed to fetch content after multiple retries.");
-        }
-
+        // REMOVED: fetchWithRetry function
 
         // Save state to localStorage
         function saveState() {
@@ -476,140 +455,305 @@
             }
         }
 
-        // --- Gemini API Call for Nutrition Estimation (COMPLETED) ---
+        // REMOVED: All Gemini API call logic (fetchNutritionEstimate)
 
-        const NUTRITION_SCHEMA = {
-            type: "OBJECT",
-            description: "Estimated nutritional values for the food item in grams (g) and kilocalories (kcal).",
-            properties: {
-                "estimatedCalories": { "type": "INTEGER", "description": "Total estimated kilocalories (kcal) rounded to the nearest integer." },
-                "estimatedProtein": { "type": "INTEGER", "description": "Estimated protein in grams (g) rounded to the nearest integer." },
-                "estimatedFat": { "type": "INTEGER", "description": "Estimated fat in grams (g) rounded to the nearest integer." },
-                "estimatedCarbs": { "type": "INTEGER", "description": "Estimated carbohydrates in grams (g) rounded to the nearest integer." }
-            },
-            propertyOrdering: ["estimatedCalories", "estimatedProtein", "estimatedFat", "estimatedCarbs"]
-        };
+        // --- Core Application Logic ---
 
-        async function fetchNutritionEstimate(item, weight) {
-            isFetching = true;
-            estimationStatus.textContent = "🧠 AI Estimating Calories and Macros...";
-            macroDisplay.classList.add('hidden');
-            fSubmitBtn.disabled = true;
-            fSubmitBtn.textContent = 'Estimating... Please Wait';
+        function updateStats() {
+            const totalWorkouts = state.workouts.length;
+            const totalBurned = state.workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
+            const totalConsumed = state.foods.reduce((sum, f) => sum + f.calories, 0);
+            const totalProtein = state.foods.reduce((sum, f) => sum + f.protein, 0);
+            const balance = totalConsumed - (totalBurned + (state.profile.tdee || 0));
+
+            document.getElementById('stat-total-workouts').textContent = totalWorkouts;
+            document.getElementById('stat-total-burned').textContent = totalBurned.toFixed(0);
+            document.getElementById('stat-total-consumed').textContent = totalConsumed.toFixed(0);
+            document.getElementById('stat-total-protein').textContent = totalProtein.toFixed(0);
             
-            // UPDATED SYSTEM PROMPT: Enhanced to handle regional/complex dishes
-            const systemPrompt = "You are an expert nutritional database specializing in **global and regional cuisine (e.g., Indian, Mexican, East Asian)**. Based on the food item and weight provided, estimate the total calories, protein, fat, and carbohydrates. For dishes like 'dal' or 'curry,' assume common preparations (e.g., cooked with water, oil, or ghee, and standard spices) unless specified otherwise in the item description. Round all values to the nearest integer. Respond ONLY with the requested JSON object.";
-            const userQuery = `Estimate the nutrition for: ${item}, weighing ${weight} grams.`;
+            document.getElementById('stat-tdee').textContent = state.profile.tdee ? state.profile.tdee.toFixed(0) : 'N/A';
 
-            try {
-                const payload = {
-                    contents: [{ parts: [{ text: userQuery }] }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: NUTRITION_SCHEMA
-                    }
-                };
+            const balanceText = state.profile.tdee ? balance.toFixed(0) : 'N/A';
+            document.getElementById('stat-balance').textContent = balanceText;
 
-                const fetchOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                };
+            const balanceCard = document.getElementById('stat-balance-card');
+            balanceCard.classList.remove('bg-green-600', 'bg-red-600', 'bg-gray-600');
 
-                const response = await fetchWithRetry(apiUrl, fetchOptions);
-                const result = await response.json();
-
-                const jsonString = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!jsonString) {
-                    throw new Error("API did not return a valid JSON string.");
+            if (state.profile.tdee) {
+                if (balance <= -250) {
+                    balanceCard.classList.add('bg-green-600'); // Significant deficit (good for loss)
+                } else if (balance >= 250) {
+                    balanceCard.classList.add('bg-red-600'); // Significant surplus (good for gain)
+                } else {
+                    balanceCard.classList.add('bg-gray-600'); // Maintenance/Neutral
                 }
-
-                const parsedJson = JSON.parse(jsonString);
-                
-                // Validate and clean up and complete the cut-off logic
-                const estimatedData = {
-                    calories: parsedJson.estimatedCalories || 0,
-                    protein: parsedJson.estimatedProtein || 0,
-                    fat: parsedJson.estimatedFat || 0,
-                    carbs: parsedJson.estimatedCarbs || 0,
-                };
-
-                // Store in hidden fields
-                fCaloriesInput.value = estimatedData.calories;
-                fProteinInput.value = estimatedData.protein;
-                fFatInput.value = estimatedData.fat;
-                fCarbsInput.value = estimatedData.carbs;
-
-                // Display to user
-                displayKcal.textContent = estimatedData.calories;
-                displayProtein.textContent = estimatedData.protein;
-                displayFat.textContent = estimatedData.fat;
-                displayCarbs.textContent = estimatedData.carbs;
-
-                estimationStatus.textContent = "✅ Estimation Complete!";
-                macroDisplay.classList.remove('hidden');
-
-                return estimatedData;
-
-            } catch (error) {
-                console.error("Gemini API Error:", error);
-                customModal(`AI Estimation failed: ${error.message}. Please check your API key, or try again later with a simpler query.`, 'API Error');
-
-                // Reset inputs and display to reflect failure
-                fCaloriesInput.value = 0;
-                fProteinInput.value = 0;
-                fFatInput.value = 0;
-                fCarbsInput.value = 0;
-                
-                displayKcal.textContent = 0;
-                displayProtein.textContent = 0;
-                displayFat.textContent = 0;
-                displayCarbs.textContent = 0;
-
-                macroDisplay.classList.add('hidden');
-                estimationStatus.textContent = "❌ Estimation Failed. Enter food details to estimate...";
-
-                return null;
-            } finally {
-                isFetching = false;
-                fSubmitBtn.disabled = false;
-                fSubmitBtn.textContent = 'Get Estimate & Log Entry';
+            } else {
+                 balanceCard.classList.add('bg-gray-600');
             }
         }
 
-        // --- Core Application Logic (CRUD & Calculations) ---
+        function switchView(view) {
+            document.getElementById('workout-view').classList.add('hidden');
+            document.getElementById('nutrition-view').classList.add('hidden');
+            document.getElementById('tdee-view').classList.add('hidden');
 
-        function calculateBMR(gender, age, height, weight) {
-            // Harris-Benedict Equation
+            document.getElementById(`${view}-view`).classList.remove('hidden');
+
+            document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab[onclick="switchView('${view}')"]`).classList.add('active');
+            
+            currentView = view;
+        }
+
+        // --- Workout Logic ---
+
+        function logWorkout(e) {
+            e.preventDefault();
+
+            const date = wDateInput.value;
+            const activity = wActivityInput.value.trim();
+            const sets = parseInt(wSetsInput.value);
+            const reps = parseInt(wRepsInput.value);
+            const id = wIdInput.value;
+            
+            // Calculation: Total Reps * 1.5 kcal
+            const caloriesBurned = sets * reps * 1.5; 
+
+            if (id) {
+                // Edit existing workout
+                const index = state.workouts.findIndex(w => w.id === id);
+                if (index > -1) {
+                    state.workouts[index] = { id, date, activity, sets, reps, caloriesBurned };
+                    customModal("Workout updated successfully!");
+                }
+            } else {
+                // Add new workout
+                const newId = Date.now().toString();
+                state.workouts.push({ id: newId, date, activity, sets, reps, caloriesBurned });
+                customModal("Workout added successfully!");
+            }
+            
+            workoutForm.reset();
+            wIdInput.value = '';
+            wSubmitBtn.textContent = 'Add Workout';
+            saveState();
+            updateStats();
+            renderWorkouts();
+        }
+
+        function editWorkout(id) {
+            const workout = state.workouts.find(w => w.id === id);
+            if (!workout) return;
+
+            wIdInput.value = workout.id;
+            wDateInput.value = workout.date;
+            wActivityInput.value = workout.activity;
+            wSetsInput.value = workout.sets;
+            wRepsInput.value = workout.reps;
+
+            wSubmitBtn.textContent = 'Save Workout Changes';
+            switchView('workout');
+        }
+
+        async function deleteWorkout(id) {
+            const confirmed = await customModal("Are you sure you want to delete this workout entry?", "Confirm Deletion", true);
+            if (!confirmed) return;
+
+            state.workouts = state.workouts.filter(w => w.id !== id);
+            saveState();
+            updateStats();
+            renderWorkouts();
+            customModal("Workout entry deleted.");
+        }
+
+        function renderWorkouts() {
+            workoutList.innerHTML = '';
+            const sortedWorkouts = [...state.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (sortedWorkouts.length === 0) {
+                document.getElementById('w-no-data-message').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('w-no-data-message').classList.add('hidden');
+
+
+            sortedWorkouts.forEach((w, index) => {
+                const row = document.createElement('tr');
+                row.classList.add('data-row');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${w.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">${w.activity}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">${w.sets}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">${w.reps}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-400">${w.caloriesBurned.toFixed(0)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        <button onclick="editWorkout('${w.id}')" class="text-indigo-400 hover:text-indigo-600 transition mr-2">Edit</button>
+                        <button onclick="deleteWorkout('${w.id}')" class="text-red-400 hover:text-red-600 transition">Delete</button>
+                    </td>
+                `;
+                workoutList.appendChild(row);
+            });
+        }
+
+        // --- Nutrition Logic (MODIFIED) ---
+
+        async function logFood(e) {
+            e.preventDefault();
+
+            const date = fDateInput.value;
+            const item = fItemInput.value.trim();
+            const weight = parseInt(fWeightInput.value);
+            const calories = parseInt(fCaloriesInput.value);
+            const protein = parseInt(fProteinInput.value);
+            const fat = parseInt(fFatInput.value);
+            const carbs = parseInt(fCarbsInput.value);
+            const id = fIdInput.value;
+
+            // Simple validation to ensure all fields are filled
+            if (!date || !item || isNaN(weight) || isNaN(calories) || isNaN(protein) || isNaN(fat) || isNaN(carbs)) {
+                customModal("Please fill in all the food details including Calories, Protein, Fat, and Carbs.", "Validation Error");
+                return;
+            }
+
+            const foodEntry = {
+                id: id || Date.now().toString(),
+                date,
+                item,
+                weight,
+                calories,
+                protein,
+                fat,
+                carbs
+            };
+
+            if (id) {
+                // Edit existing food entry
+                const index = state.foods.findIndex(f => f.id === id);
+                if (index > -1) {
+                    state.foods[index] = foodEntry;
+                    customModal("Food entry updated successfully!");
+                }
+            } else {
+                // Add new food entry
+                state.foods.push(foodEntry);
+                customModal("Food entry logged successfully!");
+            }
+            
+            foodForm.reset();
+            fIdInput.value = '';
+            fSubmitBtn.textContent = 'Log Entry';
+            saveState();
+            updateStats();
+            renderFoods();
+        }
+
+        function editFood(id) {
+            const food = state.foods.find(f => f.id === id);
+            if (!food) return;
+
+            fIdInput.value = food.id;
+            fDateInput.value = food.date;
+            fItemInput.value = food.item;
+            fWeightInput.value = food.weight;
+            fCaloriesInput.value = food.calories;
+            fProteinInput.value = food.protein;
+            fFatInput.value = food.fat;
+            fCarbsInput.value = food.carbs;
+            
+            fSubmitBtn.textContent = 'Save Food Changes';
+            switchView('nutrition');
+        }
+
+        async function deleteFood(id) {
+            const confirmed = await customModal("Are you sure you want to delete this food entry?", "Confirm Deletion", true);
+            if (!confirmed) return;
+
+            state.foods = state.foods.filter(f => f.id !== id);
+            saveState();
+            updateStats();
+            renderFoods();
+            customModal("Food entry deleted.");
+        }
+
+        function renderFoods() {
+            foodList.innerHTML = '';
+            const sortedFoods = [...state.foods].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (sortedFoods.length === 0) {
+                document.getElementById('f-no-data-message').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('f-no-data-message').classList.add('hidden');
+
+
+            sortedFoods.forEach((f) => {
+                const row = document.createElement('tr');
+                row.classList.add('data-row');
+                row.innerHTML = `
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">${f.date}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.item}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.weight}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-green-400">${f.calories}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.protein}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.carbs}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.fat}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        <button onclick="editFood('${f.id}')" class="text-indigo-400 hover:text-indigo-600 transition mr-2">Edit</button>
+                        <button onclick="deleteFood('${f.id}')" class="text-red-400 hover:text-red-600 transition">Delete</button>
+                    </td>
+                `;
+                foodList.appendChild(row);
+            });
+        }
+        
+        // --- TDEE/Profile Logic ---
+
+        function calculateTDEE() {
+            const gender = pGenderInput.value;
+            const age = parseInt(pAgeInput.value);
+            const height = parseInt(pHeightInput.value);
+            const weight = parseInt(pWeightInput.value);
+            const activityFactor = parseFloat(pActivityInput.value);
+
+            if (!gender || isNaN(age) || isNaN(height) || isNaN(weight) || isNaN(activityFactor)) {
+                customModal("Please fill in all TDEE Profile fields to calculate BMR and TDEE.", "Calculation Required");
+                return false;
+            }
+            
+            let bmr;
+            // Mifflin-St Jeor Equation (More accurate than Harris-Benedict)
             if (gender === 'male') {
-                return (88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age));
-            } else if (gender === 'female') {
-                return (447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age));
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            } else { // female
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
             }
-            return 0;
+
+            const tdee = bmr * activityFactor;
+            
+            state.profile = {
+                age, gender, height, weight, activity: activityFactor, bmr, tdee
+            };
+
+            return true;
         }
 
-        function calculateTDEE(bmr, activityMultiplier) {
-            return bmr * parseFloat(activityMultiplier);
-        }
-
-        // TDEE/Profile Handling
         function renderProfile() {
-            const profile = state.profile;
-            pGenderInput.value = profile.gender || '';
-            pAgeInput.value = profile.age || '';
-            pHeightInput.value = profile.height || '';
-            pWeightInput.value = profile.weight || '';
-            pActivityInput.value = profile.activity || '';
+            const p = state.profile;
+            
+            pGenderInput.value = p.gender || '';
+            pAgeInput.value = p.age || '';
+            pHeightInput.value = p.height || '';
+            pWeightInput.value = p.weight || '';
+            pActivityInput.value = p.activity || '';
 
-            if (profile.tdee && profile.bmr) {
-                displayBMR.textContent = Math.round(profile.bmr);
-                displayTDEE.textContent = Math.round(profile.tdee);
+            if (p.bmr && p.tdee) {
+                displayBMR.textContent = p.bmr.toFixed(0);
+                displayTDEE.textContent = p.tdee.toFixed(0);
                 
-                guidanceMaintain.textContent = Math.round(profile.tdee);
-                guidanceLoss.textContent = Math.round(profile.tdee - 500);
-                guidanceGain.textContent = Math.round(profile.tdee + 250);
+                // Goal Guidance
+                guidanceMaintain.textContent = p.tdee.toFixed(0);
+                guidanceLoss.textContent = Math.max(1200, p.tdee - 500).toFixed(0); // Max(1200) for safety
+                guidanceGain.textContent = (p.tdee + 250).toFixed(0);
                 tdeeGuidance.classList.remove('hidden');
             } else {
                 displayBMR.textContent = 'N/A';
@@ -618,322 +762,42 @@
             }
         }
 
-        profileForm.addEventListener('submit', function(e) {
+        function handleProfileSubmit(e) {
             e.preventDefault();
-            
-            const gender = pGenderInput.value;
-            const age = parseInt(pAgeInput.value);
-            const height = parseInt(pHeightInput.value);
-            const weight = parseInt(pWeightInput.value);
-            const activity = pActivityInput.value;
-            
-            if (!gender || isNaN(age) || isNaN(height) || isNaN(weight) || !activity) {
-                customModal('Please fill in all TDEE profile fields.', 'Input Error');
-                return;
-            }
-            
-            const bmr = calculateBMR(gender, age, height, weight);
-            const tdee = calculateTDEE(bmr, activity);
-            
-            state.profile = {
-                gender, age, height, weight, activity,
-                bmr: Math.round(bmr), 
-                tdee: Math.round(tdee)
-            };
-            
-            saveState();
-            renderProfile();
-            updateStats();
-            customModal('Profile and TDEE calculated and saved successfully!', 'Success');
-        });
-
-        // Workout Logic
-        function addOrUpdateWorkout(item) {
-            if (item.id) {
-                const index = state.workouts.findIndex(w => w.id === item.id);
-                if (index !== -1) {
-                    state.workouts[index] = item;
-                }
-            } else {
-                item.id = Date.now().toString(); // Simple unique ID
-                state.workouts.push(item);
-            }
-            state.workouts.sort((a, b) => new Date(b.date) - new Date(a.date));
-            saveState();
-            renderWorkouts();
-            updateStats();
-        }
-
-        function renderWorkouts() {
-            const list = workoutList;
-            list.innerHTML = '';
-            const data = state.workouts;
-            document.getElementById('w-no-data-message').classList.toggle('hidden', data.length > 0);
-
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.classList.add('data-row', 'text-sm');
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">${item.date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${item.activity}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${item.sets}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${item.reps}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-red-400 font-semibold">${item.calories}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                        <button onclick="editWorkout('${item.id}')" class="text-indigo-400 hover:text-indigo-600 mr-3">Edit</button>
-                        <button onclick="deleteItem('${item.id}', 'workout')" class="text-red-400 hover:text-red-600">Delete</button>
-                    </td>
-                `;
-                list.appendChild(row);
-            });
-        }
-
-        workoutForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = wIdInput.value;
-            const sets = parseInt(wSetsInput.value);
-            const reps = parseInt(wRepsInput.value);
-            const totalReps = sets * reps;
-            const caloriesBurned = Math.round(totalReps * 1.5); // Formula: Total Reps * 1.5 kcal
-
-            const newWorkout = {
-                id: id || null,
-                date: wDateInput.value,
-                activity: wActivityInput.value,
-                sets: sets,
-                reps: reps,
-                calories: caloriesBurned
-            };
-
-            addOrUpdateWorkout(newWorkout);
-            workoutForm.reset();
-            wIdInput.value = '';
-            wSubmitBtn.textContent = 'Add Workout';
-            customModal(id ? 'Workout updated successfully!' : 'Workout logged successfully!', 'Success');
-        });
-
-        window.editWorkout = function(id) {
-            const workout = state.workouts.find(w => w.id === id);
-            if (!workout) return;
-
-            switchView('workout');
-
-            wIdInput.value = workout.id;
-            wDateInput.value = workout.date;
-            wActivityInput.value = workout.activity;
-            wSetsInput.value = workout.sets;
-            wRepsInput.value = workout.reps;
-            wSubmitBtn.textContent = 'Update Workout';
-        };
-
-        // Food Logic
-        function addOrUpdateFood(item) {
-            if (item.id) {
-                const index = state.foods.findIndex(f => f.id === item.id);
-                if (index !== -1) {
-                    state.foods[index] = item;
-                }
-            } else {
-                item.id = Date.now().toString(); // Simple unique ID
-                state.foods.push(item);
-            }
-            state.foods.sort((a, b) => new Date(b.date) - new Date(a.date));
-            saveState();
-            renderFoods();
-            updateStats();
-        }
-
-        function renderFoods() {
-            const list = foodList;
-            list.innerHTML = '';
-            const data = state.foods;
-            document.getElementById('f-no-data-message').classList.toggle('hidden', data.length > 0);
-
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.classList.add('data-row', 'text-sm');
-                row.innerHTML = `
-                    <td class="px-4 py-3 whitespace-nowrap">${item.date}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${item.item}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${item.weight}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-green-400 font-semibold">${item.calories}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${item.protein}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${item.carbs}</td>
-                    <td class="px-4 py-3 whitespace-nowrap">${item.fat}</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-center">
-                        <button onclick="editFood('${item.id}')" class="text-indigo-400 hover:text-indigo-600 mr-3">Edit</button>
-                        <button onclick="deleteItem('${item.id}', 'food')" class="text-red-400 hover:text-red-600">Delete</button>
-                    </td>
-                `;
-                list.appendChild(row);
-            });
-        }
-
-        window.editFood = function(id) {
-            const food = state.foods.find(f => f.id === id);
-            if (!food) return;
-
-            switchView('nutrition');
-
-            fIdInput.value = food.id;
-            fDateInput.value = food.date;
-            fItemInput.value = food.item;
-            fWeightInput.value = food.weight;
-            
-            fCaloriesInput.value = food.calories;
-            fProteinInput.value = food.protein;
-            fFatInput.value = food.fat;
-            fCarbsInput.value = food.carbs;
-            
-            displayKcal.textContent = food.calories;
-            displayProtein.textContent = food.protein;
-            displayFat.textContent = food.fat;
-            displayCarbs.textContent = food.carbs;
-            
-            estimationStatus.textContent = "✅ Macros Loaded from Log";
-            macroDisplay.classList.remove('hidden');
-
-            fSubmitBtn.textContent = 'Update Entry';
-        };
-
-        // Form Submission Logic
-        foodForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const item = fItemInput.value.trim();
-            const weight = parseInt(fWeightInput.value);
-            const id = fIdInput.value;
-
-            // Check if we need to fetch an estimate (for new entries or if macros are missing)
-            if (!id || (fCaloriesInput.value == 0 && fProteinInput.value == 0)) {
-                
-                // Fetch the estimate
-                const estimatedData = await fetchNutritionEstimate(item, weight);
-
-                // If estimation failed, do not proceed with logging
-                if (!estimatedData) {
-                    return;
-                }
-            } 
-            
-            // Now use the values stored in hidden fields (either freshly estimated or pre-loaded for edit)
-            const newFood = {
-                id: id || null,
-                date: fDateInput.value,
-                item: item,
-                weight: weight,
-                calories: parseInt(fCaloriesInput.value) || 0,
-                protein: parseInt(fProteinInput.value) || 0,
-                fat: parseInt(fFatInput.value) || 0,
-                carbs: parseInt(fCarbsInput.value) || 0
-            };
-
-            // Double check that we have macro data
-            if (newFood.calories === 0 && newFood.protein === 0 && newFood.carbs === 0 && newFood.fat === 0) {
-                 customModal("Cannot log entry: All estimated macro values are zero. Please try again with a more specific food name.", 'Log Error');
-                 return;
-            }
-
-            addOrUpdateFood(newFood);
-            foodForm.reset();
-            fIdInput.value = '';
-            
-            // Reset estimation display
-            fCaloriesInput.value = 0; fProteinInput.value = 0; fFatInput.value = 0; fCarbsInput.value = 0;
-            estimationStatus.textContent = "Enter food details to estimate...";
-            macroDisplay.classList.add('hidden');
-
-            fSubmitBtn.textContent = 'Get Estimate & Log Entry';
-
-            customModal(id ? 'Food entry updated successfully!' : 'Food entry logged successfully!', 'Success');
-        });
-
-        // Delete Logic (COMPLETED)
-        window.deleteItem = async function(id, type) {
-            const isConfirmed = await customModal(`Are you sure you want to delete this ${type} entry? This action cannot be undone.`, `Confirm Deletion (${type})`, true);
-            
-            if (isConfirmed) {
-                if (type === 'workout') {
-                    state.workouts = state.workouts.filter(w => w.id !== id);
-                    renderWorkouts();
-                } else if (type === 'food') {
-                    state.foods = state.foods.filter(f => f.id !== id);
-                    renderFoods();
-                }
+            if (calculateTDEE()) {
                 saveState();
                 updateStats();
+                renderProfile();
+                customModal("Profile and TDEE updated successfully!");
             }
-        };
-
-
-        // Stats Calculation
-        function updateStats() {
-            const totalWorkouts = state.workouts.length;
-            const totalBurned = state.workouts.reduce((sum, w) => sum + w.calories, 0);
-            const totalConsumed = state.foods.reduce((sum, f) => sum + f.calories, 0);
-            const totalProtein = state.foods.reduce((sum, f) => sum + f.protein, 0);
-            const tdee = state.profile.tdee || 0;
-            
-            // Calculate Caloric Balance
-            let caloricBalance = 'N/A';
-            let balanceCardColor = 'bg-gray-600';
-
-            if (tdee > 0) {
-                caloricBalance = Math.round(tdee - totalConsumed + totalBurned);
-                
-                if (caloricBalance < -500) {
-                    balanceCardColor = 'bg-red-800'; // Large deficit
-                } else if (caloricBalance < 0) {
-                    balanceCardColor = 'bg-red-600'; // Small deficit
-                } else if (caloricBalance < 250) {
-                    balanceCardColor = 'bg-green-600'; // Near maintenance
-                } else {
-                    balanceCardColor = 'bg-blue-600'; // Surplus/Gain
-                }
-            }
-
-            document.getElementById('stat-total-workouts').textContent = totalWorkouts;
-            document.getElementById('stat-total-burned').textContent = totalBurned;
-            document.getElementById('stat-total-consumed').textContent = totalConsumed;
-            document.getElementById('stat-total-protein').textContent = totalProtein;
-            document.getElementById('stat-tdee').textContent = tdee > 0 ? tdee : 'N/A';
-            
-            const balanceCard = document.getElementById('stat-balance-card');
-            balanceCard.textContent = caloricBalance;
-            
-            // Update Caloric Balance Card
-            balanceCard.className = `text-white p-4 rounded-xl card text-center ${balanceCardColor}`;
-            document.getElementById('stat-balance-card').innerHTML = `
-                <p class="text-xs font-semibold uppercase opacity-80">Caloric Balance (kcal)</p>
-                <p id="stat-balance" class="text-2xl font-bold mt-1">${caloricBalance}</p>
-            `;
         }
 
-        // View/Tab Switching
-        window.switchView = function(viewId) {
-            currentView = viewId;
-            document.getElementById('workout-view').classList.add('hidden');
-            document.getElementById('nutrition-view').classList.add('hidden');
-            document.getElementById('tdee-view').classList.add('hidden');
-            
-            document.getElementById(`${viewId}-view`).classList.remove('hidden');
+        // --- Event Listeners and Initialization ---
 
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelector(`.tab[onclick="switchView('${viewId}')"]`).classList.add('active');
-        }
+        workoutForm.addEventListener('submit', logWorkout);
+        foodForm.addEventListener('submit', logFood); // Modified to simply log manual inputs
+        profileForm.addEventListener('submit', handleProfileSubmit);
 
-        // Initialize App
-        function init() {
-            // Set today's date on date inputs
+        // Function to set today's date as default for date inputs
+        function setDefaultDate() {
             const today = new Date().toISOString().split('T')[0];
             wDateInput.value = today;
             fDateInput.value = today;
-
-            loadState();
-            switchView(currentView); // Initial view load
         }
 
-        init();
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaultDate();
+            loadState();
+            switchView(currentView);
+        });
+
+        // Expose functions globally for HTML inline event handlers (edit/delete)
+        window.switchView = switchView;
+        window.editWorkout = editWorkout;
+        window.deleteWorkout = deleteWorkout;
+        window.editFood = editFood;
+        window.deleteFood = deleteFood;
     </script>
 </body>
 </html>

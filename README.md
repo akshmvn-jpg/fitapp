@@ -29,10 +29,10 @@
 <body class="min-h-screen p-4 sm:p-8 bg-gray-900 text-gray-200">
 
     <div class="max-w-4xl mx-auto">
-        <!-- Header -->
+        <!-- Header: UPDATED FOR BETTER IMPACT -->
         <header class="text-center mb-6 p-6 bg-gray-800 rounded-xl card">
-            <h1 class="text-4xl font-extrabold text-green-400 mb-2">💪 Advanced Health Dashboard</h1>
-            <p class="text-gray-400">Track reps, sets, and food weight for deeper analysis.</p>
+            <h1 class="text-4xl font-extrabold text-green-400 mb-2">⚡️ Apex Health & Energy Tracker</h1>
+            <p class="text-gray-400">Monitor TDEE, track macros, and calculate your **Caloric Balance** for targeted results.</p>
         </header>
 
         <!-- Stats Summary (Updated to handle 6 elements better) -->

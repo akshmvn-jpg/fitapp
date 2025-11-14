@@ -77,10 +77,10 @@
 
             <!-- Tab Navigation -->
             <div class="flex border-b border-gray-700 mb-6 overflow-x-auto">
-                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition active" onclick="switchView('workout')">
+                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition" onclick="switchView('workout')">
                     Workouts
                 </button>
-                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition" onclick="switchView('nutrition')">
+                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition active" onclick="switchView('nutrition')">
                     Nutrition
                 </button>
                 <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition" onclick="switchView('tdee')">
@@ -89,7 +89,7 @@
             </div>
 
             <!-- WORKOUT VIEW (Unchanged) -->
-            <div id="workout-view">
+            <div id="workout-view" class="hidden">
                 <!-- Workout Input Form -->
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
                     <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Workout</h2>
@@ -152,11 +152,13 @@
             </div>
 
             <!-- NUTRITION VIEW (Updated for AI Estimation) -->
-            <div id="nutrition-view" class="hidden">
+            <div id="nutrition-view">
                 <!-- Nutrition Input Form -->
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
                     <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry (AI Estimated)</h2>
-                    <p class="text-sm text-gray-500 mb-4">Enter the food and weight; macros and calories will be estimated using the Gemini AI model.</p>
+                    <p class="text-sm text-yellow-500 mb-2">
+                        💡 **Tip for Accuracy:** For regional dishes like **Dal**, include preparation details (e.g., "Masoor Dal with 1 tsp Ghee") for better AI estimation.
+                    </p>
                     <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <input type="hidden" id="food-id">
 
@@ -167,7 +169,7 @@
 
                         <div>
                             <label for="f-item" class="block text-sm font-medium text-gray-400 mb-1">Meal/Item Name</label>
-                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Apple, Pasta" required
+                            <input type="text" id="f-item" placeholder="e.g., Dal with Ghee, Apple, Chicken Curry" required
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
@@ -338,7 +340,7 @@
                 activity: null, bmr: null, tdee: null
             }
         };
-        let currentView = 'workout';
+        let currentView = 'nutrition';
         let isFetching = false;
 
 
@@ -367,8 +369,6 @@
 
         const workoutList = document.getElementById('workout-list');
         const foodList = document.getElementById('food-list');
-
-        // ... other stat/view elements are already defined in the original file
 
         // --- Utility Functions ---
 
@@ -479,7 +479,7 @@
             }
         }
 
-        // --- Gemini API Call for Nutrition Estimation ---
+        // --- Gemini API Call for Nutrition Estimation (UPDATED) ---
 
         const NUTRITION_SCHEMA = {
             type: "OBJECT",
@@ -500,7 +500,8 @@
             fSubmitBtn.disabled = true;
             fSubmitBtn.textContent = 'Estimating... Please Wait';
             
-            const systemPrompt = "You are an expert nutritional database. Based on the food item and weight provided, estimate the total calories, protein, fat, and carbohydrates. Round all values to the nearest integer. Respond ONLY with the requested JSON object.";
+            // UPDATED SYSTEM PROMPT: Enhanced to handle regional/complex dishes
+            const systemPrompt = "You are an expert nutritional database specializing in **global and regional cuisine (e.g., Indian, Mexican, East Asian)**. Based on the food item and weight provided, estimate the total calories, protein, fat, and carbohydrates. For dishes like 'dal' or 'curry,' assume common preparations (e.g., cooked with water, oil, or ghee, and standard spices) unless specified otherwise in the item description. Round all values to the nearest integer. Respond ONLY with the requested JSON object.";
             const userQuery = `Estimate the nutrition for: ${item}, weighing ${weight} grams.`;
 
             try {
@@ -564,7 +565,6 @@
         // --- Render Functions ---
 
         function renderProfile() {
-            // ... (TDEE/Profile logic, unchanged)
             const profile = state.profile;
             const pGenderInput = document.getElementById('p-gender');
             const pAgeInput = document.getElementById('p-age');
@@ -607,7 +607,6 @@
         }
 
         function renderWorkouts() {
-            // ... (Workout logic, unchanged)
             const wNoDataMessage = document.getElementById('w-no-data-message');
             workoutList.innerHTML = '';
             // Sort by date descending
@@ -736,7 +735,7 @@
             saveState();
         }
 
-        // --- Event Handlers & CRUD Logic (Modified Food Logic) ---
+        // --- Event Handlers & CRUD Logic ---
 
         // View Switching
         window.switchView = function(viewName) {
@@ -768,13 +767,37 @@
         }
 
         window.editWorkout = function(id) {
-            // Logic to populate workout form for editing (omitted for brevity, assume implementation exists)
+            // Placeholder logic for editing workouts
+            const workout = state.workouts.find(w => w.id === id);
+            if (workout) {
+                 customModal(`Editing workout: ${workout.activity}. Please implement the form population logic for full editing support.`, "Edit Placeholder");
+                 // In a full implementation, you'd populate the form fields here.
+            }
         }
 
         workoutForm.addEventListener('submit', (e) => {
-            // Logic to handle workout submission (omitted for brevity, assume implementation exists)
             e.preventDefault();
-            // ... (Workout submission logic using wDateInput, wActivityInput, etc.)
+            const newWorkout = {
+                id: document.getElementById('workout-id').value || crypto.randomUUID(),
+                date: wDateInput.value,
+                activity: document.getElementById('w-activity').value,
+                sets: parseInt(document.getElementById('w-sets').value),
+                reps: parseInt(document.getElementById('w-reps').value),
+            };
+
+            if (document.getElementById('workout-id').value) {
+                state.workouts = state.workouts.map(w => w.id === newWorkout.id ? newWorkout : w);
+                customModal("Workout updated successfully.", "Success");
+            } else {
+                state.workouts.push(newWorkout);
+                customModal("Workout added successfully.", "Success");
+            }
+
+            updateStats();
+            renderWorkouts();
+            workoutForm.reset();
+            wDateInput.value = new Date().toISOString().split('T')[0]; // Reset date to today
+            document.getElementById('workout-id').value = "";
         });
 
 
@@ -833,8 +856,13 @@
 
             // 1. Get Estimation from AI (or use existing for pure update)
             let estimatedMacros;
-            if (isEdit && fSubmitBtn.textContent === 'Update Food Entry') {
-                // If it's a simple update and the user didn't re-trigger estimation, use stored values
+            
+            // Check if the user is in 'Edit' mode AND hasn't changed the food/weight (simple update)
+            const currentFood = isEdit ? state.foods.find(f => f.id === fIdInput.value) : null;
+            const itemChanged = !currentFood || currentFood.item !== item || currentFood.weight !== weight;
+
+            if (isEdit && !itemChanged) {
+                 // If item/weight didn't change in edit mode, reuse stored macros
                  estimatedMacros = {
                     calories: parseInt(fCaloriesInput.value) || 0,
                     protein: parseInt(fProteinInput.value) || 0,
@@ -842,7 +870,7 @@
                     carbs: parseInt(fCarbsInput.value) || 0,
                 };
             } else {
-                // Must get a new estimate
+                // Must get a new estimate (either new entry or item/weight changed in edit)
                 estimatedMacros = await fetchNutritionEstimate(item, weight);
             }
             
@@ -891,7 +919,6 @@
 
 
         // --- TDEE Calculation Logic (Mifflin-St Jeor) ---
-        // (Unchanged)
 
         function calculateBMR(weight, height, age, gender) {
             if (gender === 'male') {

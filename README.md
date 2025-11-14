@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Macro and TDEE Tracker</title>
+    <title>FitApp: Comprehensive Macro and TDEE Tracker</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -27,15 +27,18 @@
 
     <div id="app" class="max-w-4xl mx-auto p-4 md:p-8">
 
-        <!-- Header -->
+        <!-- NEW FitApp Header (Primary H1) -->
+        <h1 class="text-6xl font-black mb-10 text-indigo-400 text-center">FitApp</h1>
+
+        <!-- Main Content Header (Now H2) -->
         <header class="text-center mb-8 p-4 bg-gray-800 rounded-xl shadow-2xl">
-            <h1 class="text-4xl font-extrabold text-white">Macro & TDEE Tracker</h1>
+            <h2 class="text-4xl font-extrabold text-white">Macro & TDEE Tracker</h2>
             <p class="text-gray-400 mt-2">Log food by amount, track exercises, and monitor expenditure.</p>
         </header>
 
         <!-- BMR / TDEE Calculator and Profile Section -->
         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-white border-b border-gray-700 pb-2">Personal Metabolism Calculator</h2>
+            <h3 class="text-xl font-semibold mb-4 text-white border-b border-gray-700 pb-2">Personal Metabolism Calculator</h3>
             
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                 
@@ -104,7 +107,7 @@
             
             <!-- Daily Summary Card (lg:col-span-1) -->
             <div class="lg:col-span-1 bg-gradient-to-br from-blue-800 to-indigo-900 p-6 rounded-xl shadow-lg text-white shadow-blue-900/50 h-fit order-1 lg:order-1">
-                <h2 class="text-xl font-semibold mb-3">Daily Summary</h2>
+                <h3 class="text-xl font-semibold mb-3">Daily Summary</h3>
                 
                 <hr class="border-t border-white border-opacity-30 my-3">
 
@@ -132,7 +135,7 @@
 
                 <!-- Food Input Form -->
                 <div class="bg-gray-800 p-6 rounded-xl shadow-2xl">
-                    <h2 class="text-xl font-semibold mb-4 text-white">Log Food Intake</h2>
+                    <h3 class="text-xl font-semibold mb-4 text-white">Log Food Intake</h3>
                     <div class="space-y-4">
                         
                         <!-- Food Name Input -->
@@ -165,9 +168,9 @@
                     </div>
                 </div>
                 
-                <!-- NEW: Exercise Input Form -->
+                <!-- Exercise Input Form -->
                 <div class="bg-gray-800 p-6 rounded-xl shadow-2xl">
-                    <h2 class="text-xl font-semibold mb-4 text-white">Log Exercise</h2>
+                    <h3 class="text-xl font-semibold mb-4 text-white">Log Exercise</h3>
                     <div class="space-y-4">
                         
                         <!-- Exercise Name Input -->
@@ -204,7 +207,7 @@
 
         <!-- Food History Section -->
         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-white border-b border-gray-700 pb-2">Food Intake History</h2>
+            <h3 class="text-xl font-semibold mb-4 text-white border-b border-gray-700 pb-2">Food Intake History</h3>
             <div id="food-entries-list" class="space-y-3">
                 <!-- Food Entries will be dynamically inserted here -->
                 <p id="loading-history" class="text-center text-indigo-400 mt-4">Connecting to Database...</p>
@@ -214,7 +217,7 @@
 
         <!-- Exercise History Section -->
         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl">
-            <h2 class="text-xl font-semibold mb-4 text-white border-b border-gray-700 pb-2">Exercise History (Sets & Reps)</h2>
+            <h3 class="text-xl font-semibold mb-4 text-white border-b border-gray-700 pb-2">Exercise History (Sets & Reps)</h3>
             <div id="exercise-entries-list" class="space-y-3">
                 <!-- Exercise Entries will be dynamically inserted here -->
                 <p id="loading-exercise-history" class="text-center text-green-400 mt-4">Connecting to Database...</p>
@@ -346,8 +349,6 @@
             }, 3000);
         }
         
-        // ... (getFoodData and calculateMacros remain the same) ...
-
         /**
          * Finds the nutritional data based on the input food name (case-insensitive and trimmed).
          */
@@ -563,7 +564,6 @@
 
         // --- UI Rendering ---
 
-        // ... (renderProfile and renderSummary remain the same) ...
         function renderProfile() {
             profileGenderEl.value = profile.gender;
             profileWeightEl.value = profile.weightKg;
@@ -726,7 +726,6 @@
 
         // --- Event Handlers ---
 
-        // ... (handleProfileChange and handleLogFoodEntry remain the same) ...
         function handleProfileChange() {
             profile.gender = profileGenderEl.value;
             profile.weightKg = parseFloat(profileWeightEl.value) || 0;

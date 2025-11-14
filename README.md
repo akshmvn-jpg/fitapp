@@ -2,44 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Advanced Fitness & Nutrition Tracker</title>
-    
-    <script src="https://cdn.tailwindcss.com/"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitApp</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        
-        /* FIX: Remove browser default margins and padding to eliminate the white border */
         body {
             margin: 0;
             padding: 0;
-            overflow-x: hidden; 
+            overflow-x: hidden;
+            background-color: #0b0b0b;
+            font-family: Inter, sans-serif;
         }
-        
-        .app-container {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* GitHub Dark Theme Background */
-            min-height: 100vh;
-            width: 100vw; 
-            color: #d1d5db; /* Default text color (gray-300) */
-            padding: 4px;
-        }
-        .card {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-        }
-        /* Dark mode stripe for table rows */
-        .data-row:nth-child(odd) {
-            background-color: #27303d; 
-        }
-        /* Active Tab Styling */
-        .tab.active {
-            background-color: #1f2937; /* Gray-800 */
-            border-bottom: 3px solid #34d399; /* Green-400 accent */
-            color: #34d399; 
-        }
+
+        /* Your custom styles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
     </style>
 </head>
+
 <body>
+
+    <!-- MAIN WRAPPER -->
+    <div class="w-full min-h-screen text-white">
+
+        <!-- HEADER -->
+        <header class="p-6 text-center text-3xl font-bold">
+            FitApp
+        </header>
+
+        <!-- CONTENT -->
+        <div class="p-6">
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-xl">
+                <h2 class="text-xl font-semibold mb-3">Dashboard</h2>
+                <p class="text-gray-300">Your UI goes here…</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
     <div class="app-container">
         <div class="max-w-4xl mx-auto p-4 sm:p-8">
             <header class="text-center mb-6 p-1 rounded-xl">

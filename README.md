@@ -113,7 +113,7 @@
 
                         <div class="lg:col-span-4 mt-2">
                             <button type="submit" id="w-submit-btn"
-                                            class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
+                                                class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
                                 Add Workout
                             </button>
                         </div>
@@ -143,8 +143,8 @@
             <div id="nutrition-view">
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
                     <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry</h2>
-                    <p class="text-sm text-yellow-500 mb-2">
-                        💡 **Note:** Enter *Calories*, *Protein*, *Fat*, and *Carbs* manually in the form below after submitting the Item Name and Weight.
+                    <p class="text-sm text-yellow-400 mb-2">
+                        💡 **Automated Calculation:** Enter **Item Name** and **Weight (g)** to automatically fill the macro fields from the database.
                     </p>
                     <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         <input type="hidden" id="food-id">
@@ -156,7 +156,7 @@
 
                         <div>
                             <label for="f-item" class="block text-sm font-medium text-gray-400 mb-1">Meal/Item Name</label>
-                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Rice" required
+                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Oats" required
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
@@ -165,33 +165,40 @@
                             <input type="number" id="f-weight" placeholder="grams" required min="1"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
+                       <div class="lg:col-span-2 flex items-end">
+                             <button type="button" onclick="calculateFoodMacrosManual()" class="w-full bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl hover:bg-blue-700 transition duration-150 ease-in-out">
+                                Lookup & Auto-Fill
+                            </button>
+                        </div>
                         
                         <div>
                             <label for="f-calories" class="block text-sm font-medium text-gray-400 mb-1">Calories (kcal)</label>
-                            <input type="number" id="f-calories" placeholder="e.g., 250" required min="0"
+                            <input type="number" id="f-calories" placeholder="0" required min="0"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
                         <div>
                             <label for="f-protein" class="block text-sm font-medium text-gray-400 mb-1">Protein (g)</label>
-                            <input type="number" id="f-protein" placeholder="e.g., 20" required min="0"
+                            <input type="number" id="f-protein" placeholder="0" required min="0"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
                         <div>
                             <label for="f-fat" class="block text-sm font-medium text-gray-400 mb-1">Fat (g)</label>
-                            <input type="number" id="f-fat" placeholder="e.g., 5" required min="0"
+                            <input type="number" id="f-fat" placeholder="0" required min="0"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
                         
                         <div>
                             <label for="f-carbs" class="block text-sm font-medium text-gray-400 mb-1">Carbs (g)</label>
-                            <input type="number" id="f-carbs" placeholder="e.g., 30" required min="0"
+                            <input type="number" id="f-carbs" placeholder="0" required min="0"
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
+                        <div class="sm:col-span-2 lg:col-span-1 mt-2">
+                             </div>
                         <div class="sm:col-span-2 lg:col-span-5 mt-2">
                             <button type="submit" id="f-submit-btn"
-                                            class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
+                                                class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
                                 Log Entry
                             </button>
                         </div>
@@ -268,7 +275,7 @@
 
                         <div class="lg:col-span-3 mt-2">
                             <button type="submit" id="p-submit-btn"
-                                            class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
+                                                class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-yellow-700 transition duration-150 ease-in-out">
                                 Save Profile & Calculate TDEE
                             </button>
                         </div>
@@ -311,7 +318,20 @@
 
     <script>
         const STORAGE_KEY = 'healthTrackerState';
-        // REMOVED: API_MODEL, apiKey, apiUrl, NUTRITION_SCHEMA
+
+        // --- 1. Nutritional Database (per 100g) ---
+        const FOOD_DATABASE = {
+            'chicken breast': { calories: 165, protein: 31.0, fat: 3.6, carbs: 0.0 },
+            'oats': { calories: 389, protein: 16.9, fat: 6.9, carbs: 66.3 },
+            'almonds': { calories: 579, protein: 21.1, fat: 49.9, carbs: 21.6 },
+            'white rice': { calories: 130, protein: 2.7, fat: 0.3, carbs: 28.2 },
+            'banana': { calories: 89, protein: 1.1, fat: 0.3, carbs: 22.8 },
+            'apple': { calories: 52, protein: 0.3, fat: 0.2, carbs: 13.8 },
+            'egg': { calories: 143, protein: 12.6, fat: 9.9, carbs: 0.7 },
+            'broccoli': { calories: 34, protein: 2.8, fat: 0.4, carbs: 6.6 },
+            'milk': { calories: 42, protein: 3.4, fat: 1.0, carbs: 5.0 } // Skim milk
+            // Add more foods here
+        };
 
         let state = {
             workouts: [],
@@ -322,10 +342,8 @@
             }
         };
         let currentView = 'nutrition';
-        let isFetching = false;
 
-
-        // --- DOM Element Variables (abbreviated for brevity) ---
+        // --- DOM Element Variables ---
         const workoutForm = document.getElementById('workout-form');
         const foodForm = document.getElementById('food-form');
         const profileForm = document.getElementById('profile-form'); 
@@ -343,15 +361,17 @@
         const fSubmitBtn = document.getElementById('f-submit-btn');
 
         const fIdInput = document.getElementById('food-id');
-        // REPLACED/MODIFIED: Macro elements are now for manual entry
         const fCaloriesInput = document.getElementById('f-calories');
         const fProteinInput = document.getElementById('f-protein');
         const fFatInput = document.getElementById('f-fat');
         const fCarbsInput = document.getElementById('f-carbs');
-        // REMOVED: macroDisplay, displayKcal, displayProtein, displayFat, displayCarbs, estimationStatus elements
+        const fNoDataMessage = document.getElementById('f-no-data-message');
+
 
         const workoutList = document.getElementById('workout-list');
         const foodList = document.getElementById('food-list');
+        const wNoDataMessage = document.getElementById('w-no-data-message');
+
 
         // TDEE Profile elements
         const pGenderInput = document.getElementById('p-gender');
@@ -369,9 +389,6 @@
 
         // --- Utility Functions ---
 
-        /**
-         * Custom Modal Implementation (Replaces alert/confirm)
-         */
         function customModal(message, title = 'Notification', isConfirm = false) {
             return new Promise(resolve => {
                 const modal = document.getElementById('custom-modal');
@@ -419,9 +436,6 @@
             });
         }
 
-        // REMOVED: fetchWithRetry function
-
-        // Save state to localStorage
         function saveState() {
             try {
                 const dataToSave = {
@@ -435,7 +449,6 @@
             }
         }
 
-        // Load state from localStorage
         function loadState() {
             try {
                 const storedState = localStorage.getItem(STORAGE_KEY);
@@ -445,6 +458,11 @@
                     state.foods = loadedState.foods || [];
                     state.profile = loadedState.profile || state.profile;
                     
+                    // Set current date on initial load
+                    const today = new Date().toISOString().split('T')[0];
+                    if (!wDateInput.value) wDateInput.value = today;
+                    if (!fDateInput.value) fDateInput.value = today;
+
                     updateStats();
                     renderWorkouts();
                     renderFoods();
@@ -454,8 +472,6 @@
                 console.error("Error loading state from localStorage:", error);
             }
         }
-
-        // REMOVED: All Gemini API call logic (fetchNutritionEstimate)
 
         // --- Core Application Logic ---
 
@@ -488,7 +504,7 @@
                     balanceCard.classList.add('bg-gray-600'); // Maintenance/Neutral
                 }
             } else {
-                 balanceCard.classList.add('bg-gray-600');
+                balanceCard.classList.add('bg-gray-600');
             }
         }
 
@@ -536,6 +552,9 @@
             workoutForm.reset();
             wIdInput.value = '';
             wSubmitBtn.textContent = 'Add Workout';
+            // Set current date back after reset
+            wDateInput.value = new Date().toISOString().split('T')[0];
+
             saveState();
             updateStats();
             renderWorkouts();
@@ -556,92 +575,112 @@
         }
 
         async function deleteWorkout(id) {
-            const confirmed = await customModal("Are you sure you want to delete this workout entry?", "Confirm Deletion", true);
+            const confirmed = await customModal("Are you sure you want to delete this workout?", "Confirm Deletion", true);
             if (!confirmed) return;
-
             state.workouts = state.workouts.filter(w => w.id !== id);
             saveState();
             updateStats();
             renderWorkouts();
-            customModal("Workout entry deleted.");
         }
 
         function renderWorkouts() {
             workoutList.innerHTML = '';
-            const sortedWorkouts = [...state.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            if (sortedWorkouts.length === 0) {
-                document.getElementById('w-no-data-message').classList.remove('hidden');
+            if (state.workouts.length === 0) {
+                wNoDataMessage.classList.remove('hidden');
                 return;
             }
-            document.getElementById('w-no-data-message').classList.add('hidden');
+            wNoDataMessage.classList.add('hidden');
 
-
-            sortedWorkouts.forEach((w, index) => {
+            state.workouts.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(w => {
                 const row = document.createElement('tr');
-                row.classList.add('data-row');
+                row.classList.add('data-row', 'hover:bg-gray-700', 'transition');
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${w.date}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">${w.activity}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">${w.sets}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">${w.reps}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-400">${w.caloriesBurned.toFixed(0)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <button onclick="editWorkout('${w.id}')" class="text-indigo-400 hover:text-indigo-600 transition mr-2">Edit</button>
-                        <button onclick="deleteWorkout('${w.id}')" class="text-red-400 hover:text-red-600 transition">Delete</button>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">${w.date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.activity}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.sets}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${w.reps}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-400 font-semibold">${w.caloriesBurned.toFixed(0)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editWorkout('${w.id}')" class="text-indigo-400 hover:text-indigo-600 mr-3">Edit</button>
+                        <button onclick="deleteWorkout('${w.id}')" class="text-red-400 hover:text-red-600">Delete</button>
                     </td>
                 `;
                 workoutList.appendChild(row);
             });
         }
+        
+        // --- Nutrition Logic (Automated Calculation) ---
 
-        // --- Nutrition Logic (MODIFIED) ---
+        function calculateFoodMacrosManual() {
+            const item = fItemInput.value.toLowerCase().trim();
+            const weight = parseFloat(fWeightInput.value);
 
-        async function logFood(e) {
-            e.preventDefault();
-
-            const date = fDateInput.value;
-            const item = fItemInput.value.trim();
-            const weight = parseInt(fWeightInput.value);
-            const calories = parseInt(fCaloriesInput.value);
-            const protein = parseInt(fProteinInput.value);
-            const fat = parseInt(fFatInput.value);
-            const carbs = parseInt(fCarbsInput.value);
-            const id = fIdInput.value;
-
-            // Simple validation to ensure all fields are filled
-            if (!date || !item || isNaN(weight) || isNaN(calories) || isNaN(protein) || isNaN(fat) || isNaN(carbs)) {
-                customModal("Please fill in all the food details including Calories, Protein, Fat, and Carbs.", "Validation Error");
+            // Clear previous results
+            fCaloriesInput.value = '';
+            fProteinInput.value = '';
+            fFatInput.value = '';
+            fCarbsInput.value = '';
+            
+            if (!item || isNaN(weight) || weight <= 0) {
+                customModal("Please enter a valid **Item Name** and **Weight (g)**.", "Input Required");
                 return;
             }
 
-            const foodEntry = {
-                id: id || Date.now().toString(),
-                date,
-                item,
-                weight,
-                calories,
-                protein,
-                fat,
-                carbs
-            };
+            const foodData = FOOD_DATABASE[item];
+            if (foodData) {
+                const scale = weight / 100.0; // Scale factor for 100g data
+
+                fCaloriesInput.value = (foodData.calories * scale).toFixed(0);
+                fProteinInput.value = (foodData.protein * scale).toFixed(1);
+                fFatInput.value = (foodData.fat * scale).toFixed(1);
+                fCarbsInput.value = (foodData.carbs * scale).toFixed(1);
+                
+                customModal(`Macros successfully calculated for ${weight}g of ${item.toUpperCase()}. Check the fields below.`, "Calculation Success");
+            } else {
+                customModal(`**'${item.toUpperCase()}'** was not found in the database. Please manually enter the macros (kcal, P, F, C) or try a simpler name (e.g., 'oats', not 'rolled oats').`, "Food Not Found");
+            }
+        }
+
+        function logFood(e) {
+            e.preventDefault();
+
+            const id = fIdInput.value;
+            const date = fDateInput.value;
+            const item = fItemInput.value.trim();
+            const weight = parseFloat(fWeightInput.value);
+            const calories = parseInt(fCaloriesInput.value);
+            const protein = parseFloat(fProteinInput.value);
+            const fat = parseFloat(fFatInput.value);
+            const carbs = parseFloat(fCarbsInput.value);
+
+            // Basic validation
+            if (isNaN(weight) || isNaN(calories) || isNaN(protein) || isNaN(fat) || isNaN(carbs)) {
+                customModal("Please ensure all weight and macro fields are filled with valid numbers (use the 'Lookup & Auto-Fill' button if needed).", "Validation Error");
+                return;
+            }
+
+            const newEntry = { id, date, item, weight, calories, protein, fat, carbs };
 
             if (id) {
-                // Edit existing food entry
+                // Edit existing food
                 const index = state.foods.findIndex(f => f.id === id);
                 if (index > -1) {
-                    state.foods[index] = foodEntry;
+                    state.foods[index] = newEntry;
                     customModal("Food entry updated successfully!");
                 }
             } else {
-                // Add new food entry
-                state.foods.push(foodEntry);
+                // Add new food
+                const newId = Date.now().toString();
+                state.foods.push({ ...newEntry, id: newId });
                 customModal("Food entry logged successfully!");
             }
             
             foodForm.reset();
             fIdInput.value = '';
             fSubmitBtn.textContent = 'Log Entry';
+            // Set current date back after reset
+            fDateInput.value = new Date().toISOString().split('T')[0];
+
             saveState();
             updateStats();
             renderFoods();
@@ -659,7 +698,7 @@
             fProteinInput.value = food.protein;
             fFatInput.value = food.fat;
             fCarbsInput.value = food.carbs;
-            
+
             fSubmitBtn.textContent = 'Save Food Changes';
             switchView('nutrition');
         }
@@ -667,137 +706,119 @@
         async function deleteFood(id) {
             const confirmed = await customModal("Are you sure you want to delete this food entry?", "Confirm Deletion", true);
             if (!confirmed) return;
-
             state.foods = state.foods.filter(f => f.id !== id);
             saveState();
             updateStats();
             renderFoods();
-            customModal("Food entry deleted.");
         }
 
         function renderFoods() {
             foodList.innerHTML = '';
-            const sortedFoods = [...state.foods].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            if (sortedFoods.length === 0) {
-                document.getElementById('f-no-data-message').classList.remove('hidden');
+            if (state.foods.length === 0) {
+                fNoDataMessage.classList.remove('hidden');
                 return;
             }
-            document.getElementById('f-no-data-message').classList.add('hidden');
+            fNoDataMessage.classList.add('hidden');
 
-
-            sortedFoods.forEach((f) => {
+            state.foods.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(f => {
                 const row = document.createElement('tr');
-                row.classList.add('data-row');
+                row.classList.add('data-row', 'hover:bg-gray-700', 'transition');
                 row.innerHTML = `
-                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">${f.date}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.item}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.weight}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-green-400">${f.calories}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.protein}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.carbs}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm">${f.fat}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <button onclick="editFood('${f.id}')" class="text-indigo-400 hover:text-indigo-600 transition mr-2">Edit</button>
-                        <button onclick="deleteFood('${f.id}')" class="text-red-400 hover:text-red-600 transition">Delete</button>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-300">${f.date}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">${f.item}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-yellow-400">${f.weight}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-green-400 font-semibold">${f.calories}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-purple-400">${f.protein}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-red-400">${f.carbs}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-orange-400">${f.fat}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editFood('${f.id}')" class="text-indigo-400 hover:text-indigo-600 mr-3">Edit</button>
+                        <button onclick="deleteFood('${f.id}')" class="text-red-400 hover:text-red-600">Delete</button>
                     </td>
                 `;
                 foodList.appendChild(row);
             });
         }
-        
-        // --- TDEE/Profile Logic ---
 
-        function calculateTDEE() {
+        // --- TDEE Logic (Harris-Benedict Equation) ---
+
+        function calculateTDEE(e) {
+            e.preventDefault();
+
             const gender = pGenderInput.value;
             const age = parseInt(pAgeInput.value);
             const height = parseInt(pHeightInput.value);
-            const weight = parseInt(pWeightInput.value);
+            const weight = parseFloat(pWeightInput.value);
             const activityFactor = parseFloat(pActivityInput.value);
 
             if (!gender || isNaN(age) || isNaN(height) || isNaN(weight) || isNaN(activityFactor)) {
-                customModal("Please fill in all TDEE Profile fields to calculate BMR and TDEE.", "Calculation Required");
-                return false;
+                customModal("Please fill out all profile fields completely and accurately.", "Missing Input");
+                return;
             }
-            
+
             let bmr;
-            // Mifflin-St Jeor Equation (More accurate than Harris-Benedict)
             if (gender === 'male') {
+                // Male BMR: (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) + 5
                 bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
-            } else { // female
+            } else {
+                // Female BMR: (10 * weight in kg) + (6.25 * height in cm) - (5 * age in years) - 161
                 bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
             }
 
             const tdee = bmr * activityFactor;
-            
+
             state.profile = {
-                age, gender, height, weight, activity: activityFactor, bmr, tdee
+                age, gender, height, weight, activity: activityFactor, bmr: bmr, tdee: tdee
             };
 
-            return true;
+            saveState();
+            renderProfile();
+            updateStats();
+            customModal("Profile saved and TDEE calculated successfully!", "Success");
         }
 
         function renderProfile() {
-            const p = state.profile;
-            
-            pGenderInput.value = p.gender || '';
-            pAgeInput.value = p.age || '';
-            pHeightInput.value = p.height || '';
-            pWeightInput.value = p.weight || '';
-            pActivityInput.value = p.activity || '';
+            if (state.profile.tdee) {
+                displayBMR.textContent = state.profile.bmr.toFixed(0);
+                displayTDEE.textContent = state.profile.tdee.toFixed(0);
 
-            if (p.bmr && p.tdee) {
-                displayBMR.textContent = p.bmr.toFixed(0);
-                displayTDEE.textContent = p.tdee.toFixed(0);
+                const tdeeValue = state.profile.tdee;
                 
-                // Goal Guidance
-                guidanceMaintain.textContent = p.tdee.toFixed(0);
-                guidanceLoss.textContent = Math.max(1200, p.tdee - 500).toFixed(0); // Max(1200) for safety
-                guidanceGain.textContent = (p.tdee + 250).toFixed(0);
-                tdeeGuidance.classList.remove('hidden');
-            } else {
-                displayBMR.textContent = 'N/A';
-                displayTDEE.textContent = 'N/A';
-                tdeeGuidance.classList.add('hidden');
-            }
-        }
+                guidanceMaintain.textContent = tdeeValue.toFixed(0);
+                guidanceLoss.textContent = (tdeeValue - 500).toFixed(0);
+                guidanceGain.textContent = (tdeeValue + 300).toFixed(0);
 
-        function handleProfileSubmit(e) {
-            e.preventDefault();
-            if (calculateTDEE()) {
-                saveState();
-                updateStats();
-                renderProfile();
-                customModal("Profile and TDEE updated successfully!");
+                tdeeGuidance.classList.remove('hidden');
+
+                // Fill form fields if data exists
+                pGenderInput.value = state.profile.gender || '';
+                pAgeInput.value = state.profile.age || '';
+                pHeightInput.value = state.profile.height || '';
+                pWeightInput.value = state.profile.weight || '';
+                pActivityInput.value = state.profile.activity || '';
             }
         }
 
         // --- Event Listeners and Initialization ---
 
         workoutForm.addEventListener('submit', logWorkout);
-        foodForm.addEventListener('submit', logFood); // Modified to simply log manual inputs
-        profileForm.addEventListener('submit', handleProfileSubmit);
+        foodForm.addEventListener('submit', logFood);
+        profileForm.addEventListener('submit', calculateTDEE);
 
-        // Function to set today's date as default for date inputs
-        function setDefaultDate() {
-            const today = new Date().toISOString().split('T')[0];
-            wDateInput.value = today;
-            fDateInput.value = today;
-        }
-
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
-            setDefaultDate();
-            loadState();
-            switchView(currentView);
-        });
-
-        // Expose functions globally for HTML inline event handlers (edit/delete)
-        window.switchView = switchView;
+        // Make the core functions globally accessible for the onclick attributes in the table rows
         window.editWorkout = editWorkout;
         window.deleteWorkout = deleteWorkout;
         window.editFood = editFood;
         window.deleteFood = deleteFood;
+        window.switchView = switchView;
+        window.customModal = customModal;
+        window.calculateFoodMacrosManual = calculateFoodMacrosManual; // Renamed to clarify function
+
+        // Initialize application state and rendering
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            switchView('nutrition'); // Start on the Nutrition tab
+        });
     </script>
 </body>
 </html>

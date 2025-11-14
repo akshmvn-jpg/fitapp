@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +8,14 @@
     <style>
         /* Custom font for a modern feel */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* FIX FOR LAYOUT GAP: Reset default browser margins/padding */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%; 
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0a0a0a; 
@@ -26,9 +33,6 @@
 <body class="min-h-screen antialiased bg-gray-950 text-gray-200">
 
     <div id="app" class="max-w-4xl mx-auto p-4 md:p-8">
-
-        <!-- NEW FitApp Header (Primary H1) -->
-        <h1 class="text-6xl font-black mb-10 text-indigo-400 text-center">FitApp</h1>
 
         <!-- Main Content Header (Now H2) -->
         <header class="text-center mb-8 p-4 bg-gray-800 rounded-xl shadow-2xl">
@@ -242,7 +246,6 @@
             deleteDoc, 
             doc, 
             onSnapshot, 
-            query, 
             serverTimestamp,
             setLogLevel 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -255,6 +258,7 @@
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // --- MOCK FOOD DATABASE (Nutritional values per gram) ---
+        // This simulates a basic local food database for demonstration.
         const MOCK_FOOD_DB = {
             'apple': { name: 'Apple', caloriesPerGram: 0.52, protein: 0.003, fat: 0.002, carbs: 0.14 },
             'chicken breast': { name: 'Chicken Breast (cooked)', caloriesPerGram: 1.65, protein: 0.31, fat: 0.036, carbs: 0.0 },
@@ -270,11 +274,11 @@
         let auth;
         let userId = null;
         let foodEntries = []; 
-        let exerciseEntries = []; // NEW: Array to hold exercise logs
+        let exerciseEntries = []; 
         let foodCollectionRef = null;
-        let exerciseCollectionRef = null; // NEW: Firestore reference for exercises
-        let isAuthReady = false;
-
+        let exerciseCollectionRef = null; 
+        
+        // Profile state is stored in localStorage to persist BMR/TDEE inputs
         let profile = {
             gender: 'male',
             weightKg: 70,
@@ -292,7 +296,7 @@
         const totalCaloriesConsumedEl = document.getElementById('total-calories-consumed');
         const netCaloriesResultEl = document.getElementById('net-calories-result');
         
-        // Food Form (Existing)
+        // Food Form
         const foodItemEl = document.getElementById('food-item');
         const foodAmountEl = document.getElementById('food-amount');
         const addFoodBtn = document.getElementById('add-food-btn');
@@ -300,19 +304,19 @@
         const emptyStateFoodEl = document.getElementById('empty-state-food');
         const loadingHistoryEl = document.getElementById('loading-history');
         
-        // Macro Preview (Existing)
+        // Macro Preview
         const macroPreviewEl = document.getElementById('macro-preview');
         const previewCaloriesEl = document.getElementById('preview-calories');
         const previewProteinEl = document.getElementById('preview-protein');
         const previewFatEl = document.getElementById('preview-fat');
         const previewCarbsEl = document.getElementById('preview-carbs');
 
-        // NEW: Exercise Form Elements
+        // Exercise Form Elements
         const exerciseNameEl = document.getElementById('exercise-name');
         const exerciseSetsEl = document.getElementById('exercise-sets');
         const exerciseRepsEl = document.getElementById('exercise-reps');
         const addExerciseBtn = document.getElementById('add-exercise-btn');
-        // NEW: Exercise History Elements
+        // Exercise History Elements
         const exerciseEntriesListEl = document.getElementById('exercise-entries-list');
         const emptyStateExerciseEl = document.getElementById('empty-state-exercise');
         const loadingExerciseHistoryEl = document.getElementById('loading-exercise-history');
@@ -350,7 +354,7 @@
         }
         
         /**
-         * Finds the nutritional data based on the input food name (case-insensitive and trimmed).
+         * Finds the nutritional data based on the input food name.
          */
         function getFoodData(foodName) {
             const normalizedName = foodName.trim().toLowerCase();
@@ -411,15 +415,25 @@
                 tdee: Math.round(tdee)
             };
         }
+        
+        /**
+         * Gets the current date key (YYYY-MM-DD) for daily log filtering.
+         */
+        function getCurrentDateKey() {
+            return new Date().toISOString().split('T')[0];
+        }
 
-        // --- Data Persistence (localStorage for Profile - remains the same) ---
+
+        // --- Data Persistence (localStorage for Profile) ---
 
         function loadProfile() {
             try {
                 const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
                 if (raw) {
                     const loadedProfile = JSON.parse(raw);
-                    loadedProfile.activityFactor = parseFloat(loadedProfile.activityFactor);
+                    // Ensure activity factor is correctly parsed as a number
+                    loadedProfile.activityFactor = parseFloat(loadedProfile.activityFactor); 
+                    // Update profile with loaded values
                     profile = { ...profile, ...loadedProfile };
                 }
             } catch (e) {
@@ -434,441 +448,402 @@
                 console.error('Failed to save profile to localStorage', e);
             }
         }
-        
-        // --- Firestore Operations (Updated) ---
+
+        // --- UI Rendering and Summary ---
 
         /**
-         * Sets up the real-time listener for food history (Existing).
-         */
-        function setupFoodHistoryListener() {
-            if (!foodCollectionRef) return;
-            
-            const q = query(foodCollectionRef);
-
-            onSnapshot(q, (snapshot) => {
-                foodEntries = []; 
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    foodEntries.push({
-                        id: doc.id,
-                        ...data
-                    });
-                });
-                foodEntries.sort((a, b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
-
-                updateUI();
-                loadingHistoryEl.classList.add('hidden');
-
-            }, (error) => {
-                console.error("Error listening to food history:", error);
-                showMessage("Failed to load food history. Check console for details.", 'error');
-            });
-        }
-
-        /**
-         * Sets up the real-time listener for exercise history (NEW).
-         */
-        function setupExerciseHistoryListener() {
-            if (!exerciseCollectionRef) return;
-            
-            const q = query(exerciseCollectionRef);
-
-            onSnapshot(q, (snapshot) => {
-                exerciseEntries = []; 
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    exerciseEntries.push({
-                        id: doc.id,
-                        ...data
-                    });
-                });
-                exerciseEntries.sort((a, b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
-
-                updateUI();
-                loadingExerciseHistoryEl.classList.add('hidden');
-
-            }, (error) => {
-                console.error("Error listening to exercise history:", error);
-                showMessage("Failed to load exercise history. Check console for details.", 'error');
-            });
-        }
-        
-        /**
-         * Adds a food entry to Firestore (Existing).
-         */
-        async function addFoodEntryToFirestore(entry) {
-            if (!foodCollectionRef) return showMessage('Database not ready.', 'error');
-            
-            try {
-                const { id, ...dataToSave } = entry;
-                await addDoc(foodCollectionRef, {
-                    ...dataToSave,
-                    date: serverTimestamp() 
-                });
-                showMessage('Meal logged successfully!', 'success');
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                showMessage("Failed to save meal log. Check console.", 'error');
-            }
-        }
-
-        /**
-         * Adds an exercise entry to Firestore (NEW).
-         */
-        async function addExerciseEntryToFirestore(entry) {
-            if (!exerciseCollectionRef) return showMessage('Database not ready.', 'error');
-            
-            try {
-                const { id, ...dataToSave } = entry;
-                await addDoc(exerciseCollectionRef, {
-                    ...dataToSave,
-                    date: serverTimestamp() 
-                });
-                showMessage('Exercise logged successfully!', 'success');
-            } catch (error) {
-                console.error("Error adding exercise document: ", error);
-                showMessage("Failed to save exercise log. Check console.", 'error');
-            }
-        }
-        
-        /**
-         * Deletes a food entry from Firestore (Existing).
-         */
-        async function deleteFoodEntryFromFirestore(id) {
-            if (!foodCollectionRef) return showMessage('Database not ready.', 'error');
-            
-            try {
-                await deleteDoc(doc(foodCollectionRef, id));
-                showMessage('Meal entry deleted.', 'success');
-            } catch (error) {
-                console.error("Error deleting document: ", error);
-                showMessage("Failed to delete meal log. Check console.", 'error');
-            }
-        }
-
-        /**
-         * Deletes an exercise entry from Firestore (NEW).
-         */
-        async function deleteExerciseEntryFromFirestore(id) {
-            if (!exerciseCollectionRef) return showMessage('Database not ready.', 'error');
-            
-            try {
-                await deleteDoc(doc(exerciseCollectionRef, id));
-                showMessage('Exercise entry deleted.', 'success');
-            } catch (error) {
-                console.error("Error deleting exercise document: ", error);
-                showMessage("Failed to delete exercise log. Check console.", 'error');
-            }
-        }
-
-
-        // --- UI Rendering ---
-
-        function renderProfile() {
-            profileGenderEl.value = profile.gender;
-            profileWeightEl.value = profile.weightKg;
-            profileHeightEl.value = profile.heightCm;
-            profileAgeEl.value = profile.ageYears;
-            profileActivityEl.value = profile.activityFactor;
-
-            const results = calculateMetabolism();
-            bmrResultEl.textContent = `${results.bmr} kcal`;
-            tdeeResultEl.textContent = `${results.tdee} kcal`;
-            
-            renderSummary();
-        }
-
-        function renderSummary() {
-            const TDEE = calculateMetabolism().tdee;
-
-            const totalCaloriesConsumed = foodEntries.reduce((sum, e) => sum + e.calories, 0);
-            
-            const netCalories = TDEE - totalCaloriesConsumed;
-
-            tdeeInSummaryEl.textContent = TDEE;
-            totalCaloriesConsumedEl.textContent = totalCaloriesConsumed;
-            netCaloriesResultEl.textContent = netCalories;
-            
-            netCaloriesResultEl.classList.remove('text-red-500', 'text-yellow-300');
-            if (netCalories < 0) {
-                netCaloriesResultEl.classList.add('text-red-500');
-            } else {
-                netCaloriesResultEl.classList.add('text-yellow-300');
-            }
-        }
-
-
-        /**
-         * Renders the list of food entries from Firestore data (Existing).
+         * Renders the food entries list and updates the daily summary totals.
          */
         function renderFoodEntries() {
-            foodEntriesListEl.innerHTML = ''; 
+            const today = getCurrentDateKey();
+            const dailyFood = foodEntries.filter(entry => entry.dateKey === today);
             
-            if (foodEntries.length === 0) {
-                emptyStateFoodEl.classList.remove('hidden');
-                return;
-            }
-            emptyStateFoodEl.classList.add('hidden');
+            // Calculate totals
+            const totalCalories = dailyFood.reduce((sum, entry) => sum + entry.calories, 0);
 
-            foodEntries.forEach(item => {
-                const dateString = item.date?.toDate ? item.date.toDate().toLocaleString() : 'Saving...';
-                
-                const itemEl = document.createElement('div');
-                itemEl.className = 'flex justify-between items-center p-4 bg-gray-700 border border-gray-600 rounded-lg transition duration-150 hover:shadow-xl';
-                itemEl.innerHTML = `
-                    <div class="flex flex-col">
-                        <span class="text-lg font-bold text-white">${item.item} (${item.amount}g)</span>
-                        <span class="text-xs text-gray-400 mt-0.5">${dateString}</span>
-                        <div class="text-xs mt-1 space-x-2">
-                            <span class="text-indigo-400">${item.calories} kcal</span>
-                            <span class="text-green-400">P:${item.protein}g</span>
-                            <span class="text-red-400">F:${item.fat}g</span>
-                            <span class="text-yellow-400">C:${item.carbs}g</span>
+            // Update Summary Card (Protein/Fat/Carbs are not summed in the summary card for brevity, only total consumed calories)
+            totalCaloriesConsumedEl.textContent = totalCalories.toLocaleString();
+            
+            // Render list
+            foodEntriesListEl.innerHTML = '';
+            loadingHistoryEl.classList.add('hidden');
+            emptyStateFoodEl.classList.toggle('hidden', dailyFood.length > 0);
+
+            if (dailyFood.length > 0) {
+                // Sort by timestamp (newest first)
+                dailyFood.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                dailyFood.forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg transition duration-150 hover:bg-gray-600';
+                    entryEl.innerHTML = `
+                        <div>
+                            <p class="text-sm font-semibold text-indigo-300">${entry.item} <span class="text-xs text-gray-400">(${entry.amount}g)</span></p>
+                            <p class="text-xs text-gray-400 mt-1 space-x-2">
+                                <span class="text-indigo-400 font-bold">${entry.calories} kcal</span>
+                                <span class="text-green-400">P: ${entry.protein}g</span>
+                                <span class="text-red-400">F: ${entry.fat}g</span>
+                                <span class="text-yellow-400">C: ${entry.carbs}g</span>
+                            </p>
                         </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <button data-id="${item.id}" class="delete-food-btn text-red-500 hover:text-red-400 transition duration-150 text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" />
+                        <button class="delete-btn text-red-400 hover:text-red-500 transition duration-150 p-1 rounded-full bg-gray-800" data-id="${entry.id}" data-type="food">
+                            <!-- Trashcan Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.5H2.75a.75.75 0 0 0 0 1.5h.54l.87 11.25A2.75 2.75 0 0 0 6.89 19h6.22a2.75 2.75 0 0 0 2.73-2.49L16.71 5.75h.54a.75.75 0 0 0 0-1.5H14v-.5A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 3.75a1.25 1.25 0 0 1 1.25 1.25v.5h-2.5v-.5A1.25 1.25 0 0 1 10 3.75Z" clip-rule="evenodd" />
                             </svg>
                         </button>
-                    </div>
-                `;
-                foodEntriesListEl.appendChild(itemEl);
-            });
-
-            document.querySelectorAll('.delete-food-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const idToDelete = e.currentTarget.getAttribute('data-id');
-                    deleteFoodEntryFromFirestore(idToDelete);
+                    `;
+                    foodEntriesListEl.appendChild(entryEl);
                 });
-            });
+                
+                // Add delete listener (needs to be done after rendering)
+                foodEntriesListEl.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', (e) => deleteEntry(e.currentTarget.dataset.id, e.currentTarget.dataset.type));
+                });
+            }
+
+            // Always update the overall summary
+            updateSummary();
         }
 
         /**
-         * Renders the list of exercise entries from Firestore data (NEW).
+         * Renders the exercise entries list.
          */
         function renderExerciseEntries() {
-            exerciseEntriesListEl.innerHTML = ''; 
+            const today = getCurrentDateKey();
+            const dailyExercise = exerciseEntries.filter(entry => entry.dateKey === today);
             
-            if (exerciseEntries.length === 0) {
-                emptyStateExerciseEl.classList.remove('hidden');
-                return;
-            }
-            emptyStateExerciseEl.classList.add('hidden');
+            exerciseEntriesListEl.innerHTML = '';
+            loadingExerciseHistoryEl.classList.add('hidden');
+            emptyStateExerciseEl.classList.toggle('hidden', dailyExercise.length > 0);
 
-            exerciseEntries.forEach(item => {
-                const dateString = item.date?.toDate ? item.date.toDate().toLocaleString() : 'Saving...';
-                
-                const itemEl = document.createElement('div');
-                itemEl.className = 'flex justify-between items-center p-4 bg-gray-700 border border-gray-600 rounded-lg transition duration-150 hover:shadow-xl';
-                itemEl.innerHTML = `
-                    <div class="flex flex-col">
-                        <span class="text-lg font-bold text-white">${item.name}</span>
-                        <span class="text-xs text-gray-400 mt-0.5">${dateString}</span>
-                        <div class="text-xs mt-1 space-x-3">
-                            <span class="text-green-400 font-semibold">${item.sets} sets</span>
-                            <span class="text-yellow-400 font-semibold">${item.reps} reps/set</span>
-                            <span class="text-indigo-400 font-semibold">= ${item.sets * item.reps} total reps</span>
+            if (dailyExercise.length > 0) {
+                // Sort by timestamp (newest first)
+                dailyExercise.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                dailyExercise.forEach(entry => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-lg transition duration-150 hover:bg-gray-600';
+                    entryEl.innerHTML = `
+                        <div>
+                            <p class="text-sm font-semibold text-green-300">${entry.name}</p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                ${entry.sets} sets x ${entry.reps} reps
+                            </p>
                         </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <button data-id="${item.id}" class="delete-exercise-btn text-red-500 hover:text-red-400 transition duration-150 text-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" />
+                        <button class="delete-btn text-red-400 hover:text-red-500 transition duration-150 p-1 rounded-full bg-gray-800" data-id="${entry.id}" data-type="exercise">
+                            <!-- Trashcan Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.5H2.75a.75.75 0 0 0 0 1.5h.54l.87 11.25A2.75 2.75 0 0 0 6.89 19h6.22a2.75 2.75 0 0 0 2.73-2.49L16.71 5.75h.54a.75.75 0 0 0 0-1.5H14v-.5A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 3.75a1.25 1.25 0 0 1 1.25 1.25v.5h-2.5v-.5A1.25 1.25 0 0 1 10 3.75Z" clip-rule="evenodd" />
                             </svg>
                         </button>
-                    </div>
-                `;
-                exerciseEntriesListEl.appendChild(itemEl);
-            });
-
-            document.querySelectorAll('.delete-exercise-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const idToDelete = e.currentTarget.getAttribute('data-id');
-                    deleteExerciseEntryFromFirestore(idToDelete);
+                    `;
+                    exerciseEntriesListEl.appendChild(entryEl);
                 });
-            });
-        }
 
-        /**
-         * Displays the calculated macros in the preview box (Existing).
-         */
-        function renderMacroPreview() {
-            const foodName = foodItemEl.value;
-            const amount = parseFloat(foodAmountEl.value);
-
-            if (!foodName.trim() || isNaN(amount) || amount <= 0) {
-                macroPreviewEl.classList.add('hidden');
-                return;
+                // Add delete listener
+                exerciseEntriesListEl.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', (e) => deleteEntry(e.currentTarget.dataset.id, e.currentTarget.dataset.type));
+                });
             }
-
-            const macros = calculateMacros(foodName, amount);
-            
-            previewCaloriesEl.textContent = `${macros.calories} kcal`;
-            previewProteinEl.textContent = `P: ${macros.protein}g`;
-            previewFatEl.textContent = `F: ${macros.fat}g`;
-            previewCarbsEl.textContent = `C: ${macros.carbs}g`;
-            
-            macroPreviewEl.classList.remove('hidden');
         }
-
 
         /**
-         * Main function to re-render all dynamic parts of the UI (Updated).
+         * Updates the summary card with TDEE, consumed calories, and net calories.
          */
-        function updateUI() {
-            renderProfile();
-            renderFoodEntries();
-            renderExerciseEntries(); // NEW
-            renderMacroPreview(); 
+        function updateSummary() {
+            const { bmr, tdee } = calculateMetabolism();
+            const totalConsumed = foodEntries
+                .filter(entry => entry.dateKey === getCurrentDateKey())
+                .reduce((sum, entry) => sum + entry.calories, 0);
+
+            const netCalories = tdee - totalConsumed;
+
+            // Update TDEE/BMR in calculator section
+            bmrResultEl.textContent = `${bmr.toLocaleString()} kcal`;
+            tdeeResultEl.textContent = `${tdee.toLocaleString()} kcal`;
+            
+            // Update Summary Card
+            tdeeInSummaryEl.textContent = tdee.toLocaleString();
+            totalCaloriesConsumedEl.textContent = totalConsumed.toLocaleString();
+            
+            netCaloriesResultEl.textContent = netCalories.toLocaleString();
+
+            // Color code net calories for visual feedback
+            netCaloriesResultEl.classList.remove('text-red-400', 'text-yellow-300', 'text-green-400');
+            if (netCalories < -100) {
+                netCaloriesResultEl.classList.add('text-red-400'); // Significant Calorie surplus
+            } else if (netCalories > 100) {
+                netCaloriesResultEl.classList.add('text-green-400'); // Significant deficit
+            } else {
+                netCaloriesResultEl.classList.add('text-yellow-300'); // Maintenance/Small change
+            }
         }
 
-        // --- Event Handlers ---
+        // --- Profile Management ---
 
+        /**
+         * Updates the profile object, saves it, and recalculates metabolism.
+         */
         function handleProfileChange() {
             profile.gender = profileGenderEl.value;
             profile.weightKg = parseFloat(profileWeightEl.value) || 0;
             profile.heightCm = parseFloat(profileHeightEl.value) || 0;
             profile.ageYears = parseFloat(profileAgeEl.value) || 0;
-            profile.activityFactor = parseFloat(profileActivityEl.value);
+            profile.activityFactor = parseFloat(profileActivityEl.value) || 1.2;
 
             saveProfile();
-            renderProfile();
+            updateSummary();
         }
 
-        function handleLogFoodEntry() {
-            const foodName = foodItemEl.value;
-            const amount = parseFloat(foodAmountEl.value);
-
-            if (!foodName.trim()) {
-                showMessage("Please enter the name of the food item.", 'error');
-                return;
-            }
-            if (isNaN(amount) || amount <= 0) {
-                showMessage("Please enter a valid amount (greater than 0 grams).", 'error');
-                return;
-            }
-            
-            const newEntry = calculateMacros(foodName, amount);
-            
-            addFoodEntryToFirestore(newEntry);
-            
-            foodItemEl.value = '';
-            foodAmountEl.value = '100'; 
-        }
-        
         /**
-         * Handles the logic for logging a new exercise entry (NEW).
+         * Attach profile input listeners and initialize profile state.
          */
-        function handleLogExerciseEntry() {
-            const name = exerciseNameEl.value;
-            const sets = parseInt(exerciseSetsEl.value);
-            const reps = parseInt(exerciseRepsEl.value);
+        function setupProfileListeners() {
+            loadProfile();
+            
+            // Set input fields to current profile values
+            profileGenderEl.value = profile.gender;
+            profileWeightEl.value = profile.weightKg;
+            profileHeightEl.value = profile.heightCm;
+            profileAgeEl.value = profile.ageYears;
+            profileActivityEl.value = profile.activityFactor;
+            
+            // Add event listeners to all profile inputs
+            [profileGenderEl, profileWeightEl, profileHeightEl, profileAgeEl, profileActivityEl].forEach(el => {
+                el.addEventListener('change', handleProfileChange);
+                el.addEventListener('input', handleProfileChange);
+            });
 
-            if (!name.trim()) {
-                showMessage("Please enter the name of the exercise.", 'error');
+            // Initial calculation display
+            handleProfileChange();
+        }
+
+
+        // --- Firestore Operations ---
+
+        /**
+         * Set up real-time listeners for both food and exercise logs.
+         */
+        function setupFirestoreListeners() {
+            if (!db || !userId) {
+                console.error("Firestore or User ID not ready.");
                 return;
             }
-            if (isNaN(sets) || sets <= 0 || isNaN(reps) || reps <= 0) {
-                showMessage("Sets and Reps must be valid numbers greater than 0.", 'error');
+
+            // Collection path: /artifacts/{appId}/users/{userId}/food_logs
+            foodCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/food_logs`);
+            // Collection path: /artifacts/{appId}/users/{userId}/exercise_logs
+            exerciseCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exercise_logs`);
+            
+            // 1. Food Log Listener
+            onSnapshot(foodCollectionRef, (snapshot) => {
+                foodEntries = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                renderFoodEntries();
+            }, (error) => {
+                console.error("Error setting up food log listener:", error);
+                showMessage("Failed to load food history. Check console.", 'error');
+            });
+
+            // 2. Exercise Log Listener
+            onSnapshot(exerciseCollectionRef, (snapshot) => {
+                exerciseEntries = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                renderExerciseEntries();
+            }, (error) => {
+                console.error("Error setting up exercise log listener:", error);
+                showMessage("Failed to load exercise history. Check console.", 'error');
+            });
+        }
+
+        /**
+         * Deletes a document from Firestore.
+         */
+        async function deleteEntry(id, type) {
+            if (!id || !type) return;
+
+            let colRef;
+            if (type === 'food') {
+                colRef = foodCollectionRef;
+            } else if (type === 'exercise') {
+                colRef = exerciseCollectionRef;
+            } else {
                 return;
             }
+
+            try {
+                await deleteDoc(doc(colRef, id));
+                showMessage(`${type} entry successfully deleted!`, 'success');
+            } catch (e) {
+                console.error(`Error deleting ${type} entry: `, e);
+                showMessage(`Failed to delete ${type} entry.`, 'error');
+            }
+        }
+
+
+        /**
+         * Handles the submission of the food logging form.
+         */
+        async function logFood() {
+            const foodName = foodItemEl.value.trim();
+            const amount = parseInt(foodAmountEl.value, 10);
+
+            if (!foodName || isNaN(amount) || amount <= 0) {
+                showMessage("Please enter a valid food item and amount (grams).", 'error');
+                return;
+            }
+
+            // Calculate nutritional data based on the mock DB
+            const macroData = calculateMacros(foodName, amount);
             
             const newEntry = {
-                name: name.trim(),
-                sets: sets,
-                reps: reps
+                ...macroData,
+                timestamp: serverTimestamp(),
+                dateKey: getCurrentDateKey(), // For easy daily filtering
             };
+
+            try {
+                // Add the log to the Firestore collection
+                await addDoc(foodCollectionRef, newEntry);
+                showMessage(`Logged ${macroData.calories} kcal of ${newEntry.item}!`, 'success');
+                foodItemEl.value = ''; // Clear food name
+                foodAmountEl.value = '100'; // Reset amount to default
+                updateMacroPreview(); // Clear preview after successful log
+            } catch (e) {
+                console.error("Error adding food log: ", e);
+                showMessage("Failed to log food. Check console.", 'error');
+            }
+        }
+
+        /**
+         * Handles the submission of the exercise logging form.
+         */
+        async function logExercise() {
+            const exerciseName = exerciseNameEl.value.trim();
+            const sets = parseInt(exerciseSetsEl.value, 10);
+            const reps = parseInt(exerciseRepsEl.value, 10);
+
+            if (!exerciseName || isNaN(sets) || sets <= 0 || isNaN(reps) || reps <= 0) {
+                showMessage("Please enter a valid exercise name, sets, and reps.", 'error');
+                return;
+            }
+
+            const newEntry = {
+                name: exerciseName,
+                sets: sets,
+                reps: reps,
+                timestamp: serverTimestamp(),
+                dateKey: getCurrentDateKey(),
+            };
+
+            try {
+                // Add the log to the Firestore collection
+                await addDoc(exerciseCollectionRef, newEntry);
+                showMessage(`Logged ${sets} sets of ${exerciseName}!`, 'success');
+                exerciseNameEl.value = '';
+                exerciseSetsEl.value = '3';
+                exerciseRepsEl.value = '10';
+            } catch (e) {
+                console.error("Error adding exercise log: ", e);
+                showMessage("Failed to log exercise. Check console.", 'error');
+            }
+        }
+
+        /**
+         * Live updates the macro preview based on current input values.
+         */
+        function updateMacroPreview() {
+            const foodName = foodItemEl.value.trim();
+            const amount = parseInt(foodAmountEl.value, 10);
+
+            if (!foodName || isNaN(amount) || amount <= 0) {
+                macroPreviewEl.classList.add('hidden');
+                return;
+            }
+
+            const macroData = calculateMacros(foodName, amount);
             
-            addExerciseEntryToFirestore(newEntry);
+            previewCaloriesEl.textContent = `${macroData.calories} kcal`;
+            previewProteinEl.textContent = `P: ${macroData.protein}g`;
+            previewFatEl.textContent = `F: ${macroData.fat}g`;
+            previewCarbsEl.textContent = `C: ${macroData.carbs}g`;
             
-            // Clear inputs
-            exerciseNameEl.value = '';
-            exerciseSetsEl.value = '3';
-            exerciseRepsEl.value = '10';
+            macroPreviewEl.classList.remove('hidden');
         }
 
 
-        // --- Initialization ---
+        // --- Main Initialization ---
 
-        async function initFirebase() {
+        async function initApp() {
             try {
                 // 1. Initialize Firebase
+                if (!firebaseConfig || !Object.keys(firebaseConfig).length) {
+                    console.error("Firebase configuration is missing.");
+                    userIdDisplayEl.textContent = "Error: Missing Firebase Config";
+                    return;
+                }
+
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-
-                // 2. Sign in or use custom token
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // 3. Listen for auth state change to confirm sign-in
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
+                
+                // 2. Handle Authentication
+                await new Promise((resolve) => {
+                    onAuthStateChanged(auth, async (user) => {
+                        if (!user) {
+                            if (initialAuthToken) {
+                                try {
+                                    // Use custom token if provided
+                                    const credential = await signInWithCustomToken(auth, initialAuthToken);
+                                    userId = credential.user.uid;
+                                } catch (e) {
+                                    console.warn("Custom token sign-in failed. Signing in anonymously.", e);
+                                    await signInAnonymously(auth);
+                                    userId = auth.currentUser.uid;
+                                }
+                            } else {
+                                // Fallback to anonymous sign-in
+                                await signInAnonymously(auth);
+                                userId = auth.currentUser.uid;
+                            }
+                        } else {
+                            userId = user.uid;
+                        }
+                        
                         userIdDisplayEl.textContent = `User ID: ${userId}`;
-                        
-                        // Food collection reference (Existing)
-                        foodCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/food_logs`);
-                        
-                        // Exercise collection reference (NEW)
-                        exerciseCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exercise_logs`);
-
-                        isAuthReady = true;
-                        
-                        // 4. Once authenticated, start listening for real-time data
-                        setupFoodHistoryListener();
-                        setupExerciseHistoryListener(); // NEW
-                    } else {
-                        userIdDisplayEl.textContent = 'User ID: Not Signed In';
-                        loadingHistoryEl.textContent = 'Please log in to see history.';
-                        loadingExerciseHistoryEl.textContent = 'Please log in to see history.';
-                    }
+                        resolve();
+                    });
                 });
 
-            } catch (error) {
-                console.error("Firebase Initialization or Auth Error:", error);
-                loadingHistoryEl.textContent = `Error connecting to Firebase: ${error.message}`;
-                loadingExerciseHistoryEl.textContent = `Error connecting to Firebase: ${error.message}`;
+                
+                // 3. Set up Profile (localStorage)
+                setupProfileListeners();
+
+                // 4. Set up Firestore Listeners (Data)
+                setupFirestoreListeners();
+
+                // 5. Setup Form Listeners
+                addFoodBtn.addEventListener('click', logFood);
+                addExerciseBtn.addEventListener('click', logExercise);
+                
+                foodItemEl.addEventListener('input', updateMacroPreview);
+                foodAmountEl.addEventListener('input', updateMacroPreview);
+                
+                updateMacroPreview(); // Initial preview setup
+
+            } catch (e) {
+                console.error("Initialization failed:", e);
+                userIdDisplayEl.textContent = "Error during initialization.";
+                showMessage("An unexpected error occurred during setup.", 'error');
             }
         }
 
-        function init() {
-            loadProfile();
-            updateUI();
-            initFirebase();
-
-            // Attach listeners to all profile inputs for real-time calculation
-            [profileGenderEl, profileWeightEl, profileHeightEl, profileAgeEl, profileActivityEl].forEach(input => {
-                input.addEventListener('input', handleProfileChange);
-            });
-            
-            // Food Form Listeners (Existing)
-            addFoodBtn.addEventListener('click', handleLogFoodEntry);
-            [foodItemEl, foodAmountEl].forEach(input => {
-                input.addEventListener('input', renderMacroPreview);
-            });
-            foodAmountEl.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    handleLogFoodEntry();
-                }
-            });
-
-            // NEW: Exercise Form Listeners
-            addExerciseBtn.addEventListener('click', handleLogExerciseEntry);
-            exerciseRepsEl.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    handleLogExerciseEntry();
-                }
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
-
+        window.onload = initApp;
     </script>
 </body>
 </html>

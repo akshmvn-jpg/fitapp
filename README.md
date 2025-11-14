@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Advanced Fitness & Nutrition Tracker - Manual Edition</title>
+    <title>Fitness Tracker & TDEE Calculator</title>
     
     <script src="https://cdn.tailwindcss.com/"></script>
     <style>
@@ -29,59 +29,41 @@
             border-bottom: 3px solid #34d399; /* Green-400 accent */
             color: #34d399; 
         }
-        .estimation-container {
-            min-height: 90px;
-        }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="max-w-4xl mx-auto p-4 sm:p-8">
             <header class="text-center mb-6 p-1 rounded-xl">
-                <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness & Nutrition Tracker</h1>
-                <p class="text-gray-400 text-sm">Manual Entry Edition - No External APIs</p>
+                <h1 class="text-3xl font-extrabold text-green-400 mb-2">Fitness Tracker & TDEE Calculator</h1>
+                <p class="text-gray-400 text-sm">Focusing on exercise and energy expenditure.</p>
             </header>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div class="bg-indigo-700 text-white p-4 rounded-xl card text-center">
                     <p class="text-xs font-semibold uppercase opacity-80">Total Workouts</p>
                     <p id="stat-total-workouts" class="text-2xl font-bold mt-1">0</p>
                 </div>
                 <div class="bg-red-700 text-white p-4 rounded-xl card text-center">
-                    <p class="text-xs font-semibold uppercase opacity-80">Burned Calories</p>
+                    <p class="text-xs font-semibold uppercase opacity-80">Total Burned Calories</p>
                     <p id="stat-total-burned" class="text-2xl font-bold mt-1">0</p>
-                </div>
-                <div class="bg-green-700 text-white p-4 rounded-xl card text-center">
-                    <p class="text-xs font-semibold uppercase opacity-80">Consumed Calories</p>
-                    <p id="stat-total-consumed" class="text-2xl font-bold mt-1">0</p>
-                </div>
-                <div class="bg-purple-700 text-white p-4 rounded-xl card text-center">
-                    <p class="text-xs font-semibold uppercase opacity-80">Total Protein (g)</p>
-                    <p id="stat-total-protein" class="text-2xl font-bold mt-1">0</p>
                 </div>
                 <div class="bg-yellow-700 text-white p-4 rounded-xl card text-center">
                     <p class="text-xs font-semibold uppercase opacity-80">Your TDEE (kcal)</p>
                     <p id="stat-tdee" class="text-2xl font-bold mt-1">N/A</p>
                 </div>
-                <div id="stat-balance-card" class="text-white p-4 rounded-xl card text-center bg-gray-600">
-                    <p class="text-xs font-semibold uppercase opacity-80">Caloric Balance (kcal)</p>
-                    <p id="stat-balance" class="text-2xl font-bold mt-1">N/A</p>
                 </div>
-            </div>
 
             <div class="flex border-b border-gray-700 mb-6 overflow-x-auto">
-                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition" onclick="switchView('workout')">
+                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition active" onclick="switchView('workout')">
                     Workouts
-                </button>
-                <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition active" onclick="switchView('nutrition')">
-                    Nutrition
                 </button>
                 <button class="tab px-4 py-3 text-lg font-semibold text-gray-400 hover:text-green-400 transition" onclick="switchView('tdee')">
                     TDEE / Profile
                 </button>
-            </div>
+                </div>
 
-            <div id="workout-view" class="hidden">
+            <div id="workout-view">
                 <div class="bg-gray-800 p-6 rounded-xl card mb-8">
                     <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Workout</h2>
                     <p class="text-sm text-gray-500 mb-4">Calories are calculated automatically: Total Reps &times; 1.5 kcal.</p>
@@ -95,7 +77,7 @@
 
                         <div>
                             <label for="w-activity" class="block text-sm font-medium text-gray-400 mb-1">Activity</label>
-                            <input type="text" id="w-activity" placeholder="e.g., Squats, Bench Press" required
+                            <input type="text" id="w-activity" placeholder="e.g., Squats, Running" required
                                 class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
                         </div>
 
@@ -137,87 +119,6 @@
                         </tbody>
                     </table>
                     <p id="w-no-data-message" class="text-center text-gray-500 p-4 hidden">No workouts logged yet. Get moving!</p>
-                </div>
-            </div>
-
-            <div id="nutrition-view">
-                <div class="bg-gray-800 p-6 rounded-xl card mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Log New Food Entry</h2>
-                    <p class="text-sm text-gray-500 mb-2">
-                        Enter the details for your food item manually. Get the nutrition facts from the label or a trusted source.
-                    </p>
-                    <form id="food-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <input type="hidden" id="food-id">
-
-                        <div class="lg:col-span-1">
-                            <label for="f-date" class="block text-sm font-medium text-gray-400 mb-1">Date</label>
-                            <input type="date" id="f-date" required class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div class="lg:col-span-2">
-                            <label for="f-item" class="block text-sm font-medium text-gray-400 mb-1">Meal/Item Name</label>
-                            <input type="text" id="f-item" placeholder="e.g., Chicken Breast, Pasta" required
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div class="lg:col-span-1">
-                            <label for="f-weight" class="block text-sm font-medium text-gray-400 mb-1">Approx. Weight (g)</label>
-                            <input type="number" id="f-weight" placeholder="grams" required min="1"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        
-                        <div>
-                            <label for="f-calories" class="block text-sm font-medium text-gray-400 mb-1">Calories (kcal)</label>
-                            <input type="number" id="f-calories" placeholder="0" required min="0"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div>
-                            <label for="f-protein" class="block text-sm font-medium text-gray-400 mb-1">Protein (g)</label>
-                            <input type="number" id="f-protein" placeholder="0" required min="0"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-
-                        <div>
-                            <label for="f-fat" class="block text-sm font-medium text-gray-400 mb-1">Fat (g)</label>
-                            <input type="number" id="f-fat" placeholder="0" required min="0"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        
-                        <div>
-                            <label for="f-carbs" class="block text-sm font-medium text-gray-400 mb-1">Carbs (g)</label>
-                            <input type="number" id="f-carbs" placeholder="0" required min="0"
-                                class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-green-500 focus:border-green-500">
-                        </div>
-                        
-                        <div class="lg:col-span-4 mt-2">
-                            <button type="submit" id="f-submit-btn"
-                                    class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition duration-150 ease-in-out">
-                                Log Entry
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="bg-gray-800 p-6 rounded-xl card overflow-x-auto">
-                    <h2 class="text-2xl font-semibold text-gray-200 mb-4 border-b border-gray-700 pb-2">Nutrition History</h2>
-                    <table class="min-w-full divide-y divide-gray-700">
-                        <thead>
-                            <tr>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Item/Meal</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Weight (g)</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Calories (kcal)</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Protein (g)</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Carbs (g)</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Fat (g)</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="food-list" class="bg-gray-800 divide-y divide-gray-700">
-                        </tbody>
-                    </table>
-                    <p id="f-no-data-message" class="text-center text-gray-500 p-4 hidden">No food logged yet. Track your intake!</p>
                 </div>
             </div>
 
@@ -284,11 +185,11 @@
                                 TDEE (Total Daily Energy Expenditure): <span id="display-tdee" class="text-yellow-400 font-bold">N/A</span> kcal
                             </p>
                             <div id="tdee-guidance" class="bg-gray-700 p-4 rounded-lg text-sm text-gray-300 hidden">
-                                <p><strong>Goal Guidance:</strong></p>
+                                <p><strong>Guidance:</strong></p>
+                                <p class="mt-2">Your TDEE is the estimated total number of calories you burn daily without exercise. Use this to help plan your fitness goals.</p>
                                 <ul class="list-disc list-inside mt-2 space-y-1">
-                                    <li>To **Maintain** your weight, consume <span class="text-yellow-400 font-semibold" id="guidance-maintain"></span> kcal per day.</li>
-                                    <li>For **Slow Weight Loss** (approx. 0.5kg/week), aim for <span class="text-red-400 font-semibold" id="guidance-loss"></span> kcal per day.</li>
-                                    <li>For **Slow Weight Gain** (Muscle building), aim for <span class="text-blue-400 font-semibold" id="guidance-gain"></span> kcal per day.</li>
+                                    <li>If your goal is **weight loss**, aim to burn more calories than you consume.</li>
+                                    <li>If your goal is **muscle gain**, aim to consume more protein and a slight caloric surplus.</li>
                                 </ul>
                             </div>
                         </div>
@@ -314,17 +215,17 @@
 
         let state = {
             workouts: [],
-            foods: [],
+            // 'foods' array removed
             profile: {
                 age: null, gender: null, height: null, weight: null,
                 activity: null, bmr: null, tdee: null
             }
         };
-        let currentView = 'nutrition';
+        let currentView = 'workout'; // Default view changed to 'workout'
 
         // --- DOM Element Variables ---
         const workoutForm = document.getElementById('workout-form');
-        const foodForm = document.getElementById('food-form');
+        // const foodForm = document.getElementById('food-form'); // Removed
         const profileForm = document.getElementById('profile-form');
 
         const wDateInput = document.getElementById('w-date');
@@ -334,23 +235,10 @@
         const wIdInput = document.getElementById('workout-id');
         const wSubmitBtn = document.getElementById('w-submit-btn');
 
-        const fDateInput = document.getElementById('f-date');
-        const fItemInput = document.getElementById('f-item');
-        const fWeightInput = document.getElementById('f-weight');
-        const fSubmitBtn = document.getElementById('f-submit-btn');
-        
-        // ** API elements removed **
-
-        const fIdInput = document.getElementById('food-id');
-        const fCaloriesInput = document.getElementById('f-calories');
-        const fProteinInput = document.getElementById('f-protein');
-        const fFatInput = document.getElementById('f-fat');
-        const fCarbsInput = document.getElementById('f-carbs');
-        const fNoDataMessage = document.getElementById('f-no-data-message');
-
+        // Food-related variables removed
 
         const workoutList = document.getElementById('workout-list');
-        const foodList = document.getElementById('food-list');
+        // const foodList = document.getElementById('food-list'); // Removed
         const wNoDataMessage = document.getElementById('w-no-data-message');
 
 
@@ -363,10 +251,7 @@
         const displayBMR = document.getElementById('display-bmr');
         const displayTDEE = document.getElementById('display-tdee');
         const tdeeGuidance = document.getElementById('tdee-guidance');
-        const guidanceMaintain = document.getElementById('guidance-maintain');
-        const guidanceLoss = document.getElementById('guidance-loss');
-        const guidanceGain = document.getElementById('guidance-gain');
-
+        // Removed guidance for maintain/loss/gain as they rely on consumed calories
 
         // --- Utility Functions ---
 
@@ -425,7 +310,7 @@
             try {
                 const dataToSave = {
                     workouts: state.workouts,
-                    foods: state.foods,
+                    // foods: state.foods, // Removed
                     profile: state.profile
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -440,17 +325,17 @@
                 if (storedState) {
                     const loadedState = JSON.parse(storedState);
                     state.workouts = loadedState.workouts || [];
-                    state.foods = loadedState.foods || [];
+                    // state.foods = loadedState.foods || []; // Removed
                     state.profile = loadedState.profile || state.profile;
                 }
                 // Set current date on initial load
                 const today = new Date().toISOString().split('T')[0];
                 if (!wDateInput.value) wDateInput.value = today;
-                if (!fDateInput.value) fDateInput.value = today;
+                // if (!fDateInput.value) fDateInput.value = today; // Removed
 
                 updateStats();
                 renderWorkouts();
-                renderFoods();
+                // renderFoods(); // Removed
                 renderProfile();
 
             } catch (error) {
@@ -458,7 +343,6 @@
                 // Set defaults even if load fails
                 const today = new Date().toISOString().split('T')[0];
                 if (!wDateInput.value) wDateInput.value = today;
-                if (!fDateInput.value) fDateInput.value = today;
             }
         }
 
@@ -467,45 +351,18 @@
         function updateStats() {
             const totalWorkouts = state.workouts.length;
             const totalBurned = state.workouts.reduce((sum, w) => sum + w.caloriesBurned, 0);
-            const totalConsumed = state.foods.reduce((sum, f) => sum + f.calories, 0);
-            const totalProtein = state.foods.reduce((sum, f) => sum + f.protein, 0);
             
-            // Use TDEE for balance, or 0 if not set
-            const tdee = state.profile.tdee || 0;
+            // Consumed Calories, Protein, and Calorie Balance calculations removed
             
-            // This is a running total balance.
-            const balance = totalConsumed - totalBurned - tdee;
-
-
             document.getElementById('stat-total-workouts').textContent = totalWorkouts;
             document.getElementById('stat-total-burned').textContent = totalBurned.toFixed(0);
-            document.getElementById('stat-total-consumed').textContent = totalConsumed.toFixed(0);
-            document.getElementById('stat-total-protein').textContent = totalProtein.toFixed(0);
 
             document.getElementById('stat-tdee').textContent = state.profile.tdee ? state.profile.tdee.toFixed(0) : 'N/A';
-
-            const balanceText = state.profile.tdee ? balance.toFixed(0) : 'N/A';
-            document.getElementById('stat-balance').textContent = balanceText;
-
-            const balanceCard = document.getElementById('stat-balance-card');
-            balanceCard.classList.remove('bg-green-600', 'bg-red-600', 'bg-gray-600');
-
-            if (state.profile.tdee) {
-                if (balance <= -250) {
-                    balanceCard.classList.add('bg-green-600'); // Significant deficit
-                } else if (balance >= 250) {
-                    balanceCard.classList.add('bg-red-600'); // Significant surplus
-                } else {
-                    balanceCard.classList.add('bg-gray-600'); // Maintenance/Neutral
-                }
-            } else {
-                balanceCard.classList.add('bg-gray-600');
-            }
         }
 
         function switchView(view) {
             document.getElementById('workout-view').classList.add('hidden');
-            document.getElementById('nutrition-view').classList.add('hidden');
+            // document.getElementById('nutrition-view').classList.add('hidden'); // Removed
             document.getElementById('tdee-view').classList.add('hidden');
 
             document.getElementById(`${view}-view`).classList.remove('hidden');
@@ -616,107 +473,7 @@
             }
         }
 
-        // --- Nutrition Logic ---
-
-        function logFood(e) {
-            e.preventDefault();
-
-            const date = fDateInput.value;
-            const item = fItemInput.value.trim();
-            const weight = parseFloat(fWeightInput.value);
-            const calories = parseFloat(fCaloriesInput.value);
-            const protein = parseFloat(fProteinInput.value);
-            const fat = parseFloat(fFatInput.value);
-            const carbs = parseFloat(fCarbsInput.value);
-            const id = fIdInput.value;
-
-            if (!date || !item || isNaN(weight) || isNaN(calories) || isNaN(protein) || isNaN(fat) || isNaN(carbs)) {
-                customModal('Please fill in all food fields with valid numbers.', 'Input Error');
-                return;
-            }
-
-            const foodEntry = { date, item, weight, calories, protein, fat, carbs };
-
-            if (id) {
-                // Update
-                const index = state.foods.findIndex(f => f.id === id);
-                if (index !== -1) {
-                    state.foods[index] = { ...state.foods[index], ...foodEntry };
-                }
-            } else {
-                // Add new
-                foodEntry.id = `f-${new Date().getTime()}`;
-                state.foods.push(foodEntry);
-            }
-
-            saveState();
-            updateStats();
-            renderFoods();
-            foodForm.reset();
-            fIdInput.value = '';
-            fSubmitBtn.textContent = 'Log Entry';
-            fDateInput.value = new Date().toISOString().split('T')[0]; // Reset date
-        }
-
-        function renderFoods() {
-            foodList.innerHTML = ''; // Clear existing list
-
-            if (state.foods.length === 0) {
-                fNoDataMessage.classList.remove('hidden');
-                return;
-            }
-
-            fNoDataMessage.classList.add('hidden');
-
-            const sortedFoods = [...state.foods].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            sortedFoods.forEach(f => {
-                const row = document.createElement('tr');
-                row.className = 'data-row';
-                row.innerHTML = `
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.date}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-white">${f.item}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.weight.toFixed(0)}g</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-green-400">${f.calories.toFixed(0)}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-purple-400">${f.protein.toFixed(1)}g</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.carbs.toFixed(1)}g</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${f.fat.toFixed(1)}g</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                        <button onclick="editFood('${f.id}')" class="text-blue-400 hover:text-blue-300 transition">Edit</button>
-                        <button onclick="deleteFood('${f.id}')" class="text-red-400 hover:text-red-300 transition">Delete</button>
-                    </td>
-                `;
-                foodList.appendChild(row);
-            });
-        }
-
-        function editFood(id) {
-            const food = state.foods.find(f => f.id === id);
-            if (food) {
-                fIdInput.value = food.id;
-                fDateInput.value = food.date;
-                fItemInput.value = food.item;
-                fWeightInput.value = food.weight;
-                fCaloriesInput.value = food.calories;
-                fProteinInput.value = food.protein;
-                fFatInput.value = food.fat;
-                fCarbsInput.value = food.carbs;
-                fSubmitBtn.textContent = 'Update Entry';
-                window.scrollTo(0, 0); // Scroll to top
-            }
-        }
-
-        async function deleteFood(id) {
-            const confirmed = await customModal('Are you sure you want to delete this food entry?', 'Confirm Delete', true);
-            if (confirmed) {
-                state.foods = state.foods.filter(f => f.id !== id);
-                saveState();
-                updateStats();
-                renderFoods();
-            }
-        }
-
-        // ** API Food Lookup function removed **
+        // Nutrition functions (logFood, renderFoods, editFood, deleteFood) removed
 
         // --- TDEE/Profile Logic ---
 
@@ -765,11 +522,6 @@
             if (bmr && tdee) {
                 displayBMR.textContent = bmr.toFixed(0);
                 displayTDEE.textContent = tdee.toFixed(0);
-
-                // Show guidance
-                guidanceMaintain.textContent = tdee.toFixed(0);
-                guidanceLoss.textContent = (tdee - 500).toFixed(0); // 500 kcal deficit
-                guidanceGain.textContent = (tdee + 300).toFixed(0); // 300 kcal surplus
                 tdeeGuidance.classList.remove('hidden');
             } else {
                 displayBMR.textContent = 'N/A';
@@ -786,7 +538,7 @@
 
             // Attach event listeners
             workoutForm.addEventListener('submit', logWorkout);
-            foodForm.addEventListener('submit', logFood);
+            // foodForm.addEventListener('submit', logFood); // Removed
             profileForm.addEventListener('submit', saveProfile);
 
             // Set initial view

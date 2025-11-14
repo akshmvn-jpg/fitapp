@@ -1,8 +1,10 @@
-<!-- 
-        Advanced Fitness & Nutrition Tracker
-        - Features: Tracks Workouts, Nutrition, Calculates TDEE, and determines Caloric Balance.
-        - Styling: Tailwind CSS for a dark-themed, responsive interface.
-    -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Mandatory viewport tag for responsiveness on all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Advanced Fitness & Nutrition Tracker</title>
     
     <!-- Load Tailwind CSS for modern styling and Inter font -->
     <script src="https://cdn.tailwindcss.com/"></script>
@@ -30,7 +32,8 @@
             color: #34d399; 
         }
     </style>
-
+</head>
+<body>
     <!-- App container starts immediately with content -->
     <div class="app-container">
         <div class="max-w-4xl mx-auto p-4 sm:p-8">
@@ -812,3 +815,5 @@
 
         window.onload = init;
     </script>
+</body>
+</html>
